@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator Dash()
     {
         isDashing = true;
-        float dashDuration = 0.2f; // Продолжительность рывка
+        float dashDuration = 0.1f; // Продолжительность рывка
         float startTime = Time.time;
 
         // Проверяем, двигается ли игрок
