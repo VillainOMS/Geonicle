@@ -319,7 +319,6 @@ GameObject:
   - component: {fileID: 1006986541}
   - component: {fileID: 1006986540}
   - component: {fileID: 1006986539}
-  - component: {fileID: 1006986538}
   - component: {fileID: 1006986543}
   - component: {fileID: 1006986542}
   m_Layer: 0
@@ -329,29 +328,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &1006986538
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1006986536}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1006986539
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -411,7 +387,7 @@ Transform:
   m_GameObject: {fileID: 1006986536}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.128, y: 1.045, z: -0.871}
+  m_LocalPosition: {x: 0.128, y: 2.69, z: -0.871}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -431,7 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   dashSpeed: 10
-  jumpForce: 5
+  jumpForce: -20
   weaponTransform: {fileID: 0}
 --- !u!143 &1006986543
 CharacterController:
