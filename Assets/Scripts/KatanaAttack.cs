@@ -1,0 +1,36 @@
+using DG.Tweening;
+using UnityEngine;
+
+public class KatanaAttack : MonoBehaviour
+{
+    [SerializeField] private float attackRange = 2f; // Радиус атаки
+    [SerializeField] private float attackAngle = 90f; // Угол атаки
+    [SerializeField] private int damage = 25; // Урон
+    private Tween tween;
+
+    public void Attack()
+    {
+        if (tween != null)
+        {
+            tween.Complete();
+        }
+        tween=transform.DOLocalRotate(new Vector3(0, -120, -90), 0.25f).SetLoops(2, LoopType.Yoyo);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
+
+        foreach (var hitCollider in hitColliders)
+        {
+            Vector3 directionToTarget = hitCollider.transform.position - transform.position;
+            float angleToTarget = Vector3.Angle(-transform.right, directionToTarget);
+
+            if (angleToTarget < attackAngle / 2)
+            {
+                if (hitCollider.CompareTag("Enemy"))
+                {
+                    // Наносим урон врагу
+                    Debug.Log("Katana hit: " + hitCollider.name);
+                    // hitCollider.GetComponent<Enemy>().TakeDamage(damage); // Реализация нанесения урона
+                }
+            }
+        }
+    }
+}

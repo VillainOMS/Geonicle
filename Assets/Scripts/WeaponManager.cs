@@ -3,37 +3,45 @@ using UnityEngine;
 public class WeaponManager : MonoBehaviour
 {
     public enum WeaponType { Katana, Rifle }
-    public WeaponType currentWeapon; // Текущее выбранное оружие
 
-    // Ссылки на катану и винтовку
-    [SerializeField] private GameObject katana;
-    [SerializeField] private GameObject rifle;
+    [SerializeField] private Transform weaponHolder; // Ссылка на точку для оружия
+    [SerializeField] private GameObject katanaPrefab; // Префаб катаны
+    [SerializeField] private GameObject riflePrefab; // Префаб ружья
 
-    void Start()
+    private GameObject currentWeapon; // Текущее активное оружие
+    private WeaponType currentWeaponType;
+
+    private void Start()
     {
-        // Убираем оба оружия при старте, они будут активированы при выборе
-        katana.SetActive(false);
-        rifle.SetActive(false);
+        EquipWeapon(WeaponType.Katana); // Изначально игрок с катаной
     }
 
-    public void EquipWeapon(WeaponType weapon)
+    public void EquipWeapon(WeaponType weaponType)
     {
-        // Отключаем оба оружия перед активацией нового
-        katana.SetActive(false);
-        rifle.SetActive(false);
-
-        // Включаем выбранное оружие
-        switch (weapon)
+        // Убираем текущее оружие
+        if (currentWeapon != null)
         {
-            case WeaponType.Katana:
-                katana.SetActive(true);
-                break;
-            case WeaponType.Rifle:
-                rifle.SetActive(true);
-                break;
+            currentWeapon.SetActive(false);
         }
 
-        currentWeapon = weapon;
-        Debug.Log("Weapon equipped: " + currentWeapon);
+        currentWeaponType = weaponType;
+        
+
+        // Спавним новое оружие
+        switch (weaponType)
+        {
+            case WeaponType.Katana:
+                currentWeapon = katanaPrefab;
+                break;
+            case WeaponType.Rifle:
+                currentWeapon = riflePrefab;
+                break;
+        }
+        currentWeapon.SetActive(true);
+    }
+
+    public WeaponType GetCurrentWeaponType()
+    {
+        return currentWeaponType;
     }
 }
