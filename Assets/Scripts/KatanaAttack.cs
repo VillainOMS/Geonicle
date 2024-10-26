@@ -14,7 +14,7 @@ public class KatanaAttack : MonoBehaviour
         {
             tween.Complete();
         }
-        tween=transform.DOLocalRotate(new Vector3(0, -120, -90), 0.25f).SetLoops(2, LoopType.Yoyo);
+        tween = transform.DOLocalRotate(new Vector3(0, -120, -90), 0.25f).SetLoops(2, LoopType.Yoyo);
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
 
         foreach (var hitCollider in hitColliders)
@@ -26,9 +26,12 @@ public class KatanaAttack : MonoBehaviour
             {
                 if (hitCollider.CompareTag("Enemy"))
                 {
-                    // Наносим урон врагу
-                    Debug.Log("Katana hit: " + hitCollider.name);
-                    // hitCollider.GetComponent<Enemy>().TakeDamage(damage); // Реализация нанесения урона
+                    Enemy enemy = hitCollider.GetComponent<Enemy>(); // Получаем компонент Enemy
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(damage); // Наносим урон врагу
+                        Debug.Log("Katana hit: " + hitCollider.name);
+                    }
                 }
             }
         }

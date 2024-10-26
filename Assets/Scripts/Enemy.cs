@@ -4,10 +4,10 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public event Action onDie;
-    [SerializeField] private int maxHealth = 50;
-    private int currentHealth;
+    [SerializeField] protected int maxHealth = 50;
+    protected int currentHealth;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         currentHealth = maxHealth;
     }
@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Die()
+    protected virtual void Die()
     {
         onDie?.Invoke();
         Destroy(gameObject);
