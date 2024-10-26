@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class KatanaAttack : MonoBehaviour
 {
-    [SerializeField] private float attackRange = 2f; // Радиус атаки
+    [SerializeField] private float attackRange = 8f; // Радиус атаки
     [SerializeField] private float attackAngle = 90f; // Угол атаки
     [SerializeField] private int damage = 25; // Урон
     private Tween tween;
@@ -20,7 +20,7 @@ public class KatanaAttack : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             Vector3 directionToTarget = hitCollider.transform.position - transform.position;
-            float angleToTarget = Vector3.Angle(-transform.right, directionToTarget);
+            float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
 
             if (angleToTarget < attackAngle / 2)
             {

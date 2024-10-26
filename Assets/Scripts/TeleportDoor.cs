@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 
 public class TeleportDoor : MonoBehaviour
 {
+    public event Action<Transform> OnPlayerTeleport;
     [SerializeField] private Transform[] teleportationPoints; // Массив точек телепортации
     private void OnTriggerEnter(Collider other)
     {
@@ -15,7 +17,7 @@ public class TeleportDoor : MonoBehaviour
     private void TeleportPlayer(Transform player)
     {
         // Логика для телепортации в случайную точку
-        Transform randomTeleportPoint = teleportationPoints[Random.Range(0, teleportationPoints.Length)];
+        Transform randomTeleportPoint = teleportationPoints[UnityEngine.Random.Range(0, teleportationPoints.Length)];
 
         // Получаем компонент CharacterController игрока
         CharacterController characterController = player.GetComponent<CharacterController>();
@@ -26,13 +28,16 @@ public class TeleportDoor : MonoBehaviour
             characterController.enabled = false; // Отключаем CharacterController
             player.position = randomTeleportPoint.position; // Перемещаем игрока на случайную точку
             characterController.enabled = true; // Включаем CharacterController обратно
+            OnPlayerTeleport?.Invoke(randomTeleportPoint);
         }
         else
         {
             Debug.LogError("CharacterController не найден на объекте игрока!");
         }
-
+        
         Debug.Log("Teleported to: " + randomTeleportPoint.name);
     }
+
+    
 
 }
