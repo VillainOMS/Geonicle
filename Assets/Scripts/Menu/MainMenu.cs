@@ -6,9 +6,16 @@ public class MainMenu : MonoBehaviour
 {
     public GameObject settingsMenu; // Ссылка на меню настроек
 
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.None;  // Разблокируем курсор
+        Cursor.visible = true;  // Показываем курсор
+    }
+
     // Метод для начала игры
     public void StartGame()
     {
+
         SceneManager.LoadScene("GameScene");
     }
 

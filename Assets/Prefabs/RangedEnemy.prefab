@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e031263dbb5e1364cbda812b52765c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 25
   shootPoint: {fileID: 7559251068310849399}
   projectilePrefab: {fileID: 7889723361684904537, guid: 27e1fedbcfad094449b3db9a23317543, type: 3}
   damage: 10

@@ -4,15 +4,17 @@ using UnityEngine.AI;
 public class MeleeEnemy : Enemy
 {
     [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackDamage = 10f;
+    [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackCooldown = 1f;
     private float lastAttackTime;
 
     private Transform player;
+    private PlayerHealth playerHealth;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform; // Найти игрока по тегу
+        playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
     }
 
     private void Update()
@@ -44,6 +46,9 @@ public class MeleeEnemy : Enemy
     {
         lastAttackTime = Time.time;
         Debug.Log("Melee Enemy Attacked Player for " + attackDamage + " damage!");
-        // Здесь можно вызвать метод, чтобы нанести урон игроку
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(attackDamage);
+        }
     }
 }

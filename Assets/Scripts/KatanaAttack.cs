@@ -3,18 +3,25 @@ using UnityEngine;
 
 public class KatanaAttack : MonoBehaviour
 {
-    [SerializeField] private float attackRange = 8f; // Радиус атаки
-    [SerializeField] private float attackAngle = 90f; // Угол атаки
-    [SerializeField] private int damage = 25; // Урон
+    [SerializeField] private float attackRange = 8f;
+    [SerializeField] private float attackAngle = 90f;
+    [SerializeField] private int damage = 25;
+    [SerializeField] private float cooldown = 1f; // Время кулдауна для катаны
+    private float nextAttackTime = 0f;
     private Tween tween;
 
     public void Attack()
     {
+        if (Time.time < nextAttackTime) return; // Если кулдаун ещё не закончился - выходим из метода
+
+        nextAttackTime = Time.time + cooldown; // Обновляем время следующей атаки
+
         if (tween != null)
         {
             tween.Complete();
         }
-        tween = transform.DOLocalRotate(new Vector3(0, -120, -90), 0.25f).SetLoops(2, LoopType.Yoyo);
+        tween = transform.DOLocalRotate(new Vector3(0, -120, -90), cooldown / 2).SetLoops(2, LoopType.Yoyo);
+
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
 
         foreach (var hitCollider in hitColliders)
@@ -26,10 +33,10 @@ public class KatanaAttack : MonoBehaviour
             {
                 if (hitCollider.CompareTag("Enemy"))
                 {
-                    Enemy enemy = hitCollider.GetComponent<Enemy>(); // Получаем компонент Enemy
+                    Enemy enemy = hitCollider.GetComponent<Enemy>();
                     if (enemy != null)
                     {
-                        enemy.TakeDamage(damage); // Наносим урон врагу
+                        enemy.TakeDamage(damage);
                         Debug.Log("Katana hit: " + hitCollider.name);
                     }
                 }

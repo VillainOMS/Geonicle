@@ -10,6 +10,7 @@ public class RangedEnemy : Enemy
     [SerializeField] private float fireRate = 2f; // Скорострельность
 
     private Transform player;
+    private PlayerHealth playerHealth;
     private NavMeshAgent agent;
     private float nextFireTime = 0f;
 
@@ -17,6 +18,7 @@ public class RangedEnemy : Enemy
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform; // Найти игрока по тегу
+        playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
     }
 
     private void Update()
@@ -56,7 +58,7 @@ public class RangedEnemy : Enemy
         Projectile projectileComponent = projectile.GetComponent<Projectile>();
         if (projectileComponent != null)
         {
-            projectileComponent.Initialize(damage, player.position); // Устанавливаем урон и цель для снаряда
+            projectileComponent.Initialize(damage, player.position, playerHealth); // Устанавливаем урон и цель для снаряда
         }
     }
 
