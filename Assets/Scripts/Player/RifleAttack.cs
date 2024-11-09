@@ -14,6 +14,8 @@ public class RifleAttack : MonoBehaviour
     {
         if (Time.time < nextAttackTime) return; // Если кулдаун ещё не закончился - выходим из метода
 
+        AudioManager.Instance.PlayShootSound();
+
         nextAttackTime = Time.time + cooldown; // Обновляем время следующей атаки
 
         if (tween != null)

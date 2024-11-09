@@ -14,6 +14,8 @@ public class KatanaAttack : MonoBehaviour
     {
         if (Time.time < nextAttackTime) return; // Если кулдаун ещё не закончился - выходим из метода
 
+        AudioManager.Instance.PlayKatanaSound();
+
         nextAttackTime = Time.time + cooldown; // Обновляем время следующей атаки
 
         if (tween != null)

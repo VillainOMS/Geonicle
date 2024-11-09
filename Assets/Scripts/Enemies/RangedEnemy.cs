@@ -54,6 +54,7 @@ public class RangedEnemy : Enemy
     private void Attack()
     {
         // Создаем снаряд и направляем его на игрока
+        AudioManager.Instance.PlayEnemyShootSound();
         GameObject projectile = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
         Projectile projectileComponent = projectile.GetComponent<Projectile>();
         if (projectileComponent != null)

@@ -46,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
         // Прыжок
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
+            AudioManager.Instance.PlayJumpSound();
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
@@ -56,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         // Рывок
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
+            AudioManager.Instance.PlayDashSound();
             StartCoroutine(Dash(move));
         }
     }

@@ -22,6 +22,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthBar();
+        AudioManager.Instance.PlayPlayerHurtSound();
 
         if (currentHealth <= 0)
         {
@@ -42,6 +43,7 @@ public class PlayerHealth : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;  // Разблокируем курсор
         Cursor.visible = true;  // Показываем курсор
         gameOverPanel.SetActive(true);
+        AudioManager.Instance.PlayDeathScreenMusic();
         Time.timeScale = 0f; // Останавливаем время
     }
 
