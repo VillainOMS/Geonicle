@@ -33,6 +33,10 @@ public class Projectile : MonoBehaviour
         }
         Debug.Log(other.gameObject);
         // ”ничтожаем снар€д при столкновении с любым объектом
-        Destroy(gameObject);
+        if (!other.CompareTag("Enemy"))
+        {
+            Destroy(gameObject);
+        }
+        
     }
 }

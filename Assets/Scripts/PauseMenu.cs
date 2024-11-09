@@ -1,13 +1,24 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject pausePanel; // Основной Panel для паузы
     [SerializeField] private GameObject pauseMenu; // Панель с кнопками паузы
     [SerializeField] private GameObject settingsMenu; // Панель с настройками
+    [SerializeField] private Slider sfxVolume;
+    [SerializeField] private Slider musicVolume;
+    [SerializeField] private AudioMixer audioMixer;
 
     private bool isPaused = false;
+
+    private void Start()
+    {
+        sfxVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("SFXVolume", -80 + Value * 80); });
+        musicVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("MusicVolume", -80 + Value * 80); });
+    }
 
     private void Update()
     {
