@@ -27,13 +27,14 @@ public class RifleAttack : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
         {
+            Debug.Log("Rifle hit: " + hit.collider.name);
             if (hit.collider.CompareTag("Enemy"))
             {
                 Enemy enemy = hit.collider.GetComponent<Enemy>();
                 if (enemy != null)
                 {
                     enemy.TakeDamage(damage);
-                    Debug.Log("Rifle hit: " + hit.collider.name);
+                    
                 }
             }
         }
