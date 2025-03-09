@@ -4,44 +4,52 @@ public class WeaponManager : MonoBehaviour
 {
     public enum WeaponType { Katana, Rifle }
 
-    [SerializeField] private Transform weaponHolder; // Ссылка на точку для оружия
-    [SerializeField] private GameObject katanaPrefab; // Префаб катаны
-    [SerializeField] private GameObject riflePrefab; // Префаб ружья
-
-    private GameObject currentWeapon; // Текущее активное оружие
-    private WeaponType currentWeaponType;
+    [SerializeField] private WeaponBase katana;
+    [SerializeField] private WeaponBase rifle;
+    private WeaponBase currentWeapon;
+    private PlayerStats playerStats;
 
     private void Start()
     {
-        EquipWeapon(WeaponType.Katana); // Изначально игрок с катаной
+        playerStats = FindObjectOfType<PlayerStats>();
+        if (playerStats == null)
+        {
+            Debug.LogError("PlayerStats не найден!");
+        }
+
+        EquipWeapon(WeaponType.Katana);
     }
 
     public void EquipWeapon(WeaponType weaponType)
     {
-        // Убираем текущее оружие
         if (currentWeapon != null)
         {
-            currentWeapon.SetActive(false);
+            currentWeapon.gameObject.SetActive(false);
         }
 
-        currentWeaponType = weaponType;
-        
-
-        // Спавним новое оружие
         switch (weaponType)
         {
             case WeaponType.Katana:
-                currentWeapon = katanaPrefab;
+                currentWeapon = katana;
                 break;
             case WeaponType.Rifle:
-                currentWeapon = riflePrefab;
+                currentWeapon = rifle;
                 break;
         }
-        currentWeapon.SetActive(true);
+
+        if (currentWeapon != null)
+        {
+            currentWeapon.gameObject.SetActive(true);
+            currentWeapon.Initialize(playerStats); // Передаём PlayerStats в оружие
+        }
+        else
+        {
+            Debug.LogError($"WeaponManager: Не удалось переключиться на {weaponType}");
+        }
     }
 
-    public WeaponType GetCurrentWeaponType()
+    public WeaponBase GetCurrentWeapon()
     {
-        return currentWeaponType;
+        return currentWeapon;
     }
 }

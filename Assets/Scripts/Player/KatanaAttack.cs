@@ -1,48 +1,77 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class KatanaAttack : MonoBehaviour
+public class KatanaAttack : WeaponBase
 {
-    [SerializeField] private float attackRange = 8f;
-    [SerializeField] private float attackAngle = 90f;
-    [SerializeField] private int damage = 25;
-    [SerializeField] private float cooldown = 1f; // Время кулдауна для катаны
-    private float nextAttackTime = 0f;
-    private Tween tween;
+    [SerializeField] private float attackRange = 8f; // Дальность атаки (высота конуса)
+    [SerializeField] private float attackAngle = 90f; // Угол атаки (ширина конуса)
+    [SerializeField] private Transform attackOrigin; // Точка исхода удара (чуть впереди игрока)
 
-    public void Attack()
+    private void Start()
     {
-        if (Time.time < nextAttackTime) return; // Если кулдаун ещё не закончился - выходим из метода
+        if (attackOrigin == null)
+        {
+            attackOrigin = transform; // Если не задано, используем позицию игрока
+        }
+    }
+
+    public override void Attack()
+    {
+        if (Time.time < nextAttackTime) return;
+
+        float attackCooldown = GetAttackCooldown();
+        nextAttackTime = Time.time + attackCooldown;
 
         AudioManager.Instance.PlayKatanaSound();
 
-        nextAttackTime = Time.time + cooldown; // Обновляем время следующей атаки
-
-        if (tween != null)
+        if (attackTween != null && attackTween.IsActive())
         {
-            tween.Complete();
+            attackTween.Kill();
         }
-        tween = transform.DOLocalRotate(new Vector3(0, -120, -90), cooldown / 2).SetLoops(2, LoopType.Yoyo);
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
+        float attackDuration = GetAttackAnimationDuration();
+        attackTween = transform.DOLocalRotate(new Vector3(0, -120, -90), attackDuration)
+            .SetLoops(2, LoopType.Yoyo)
+            .SetEase(Ease.OutSine);
 
+        // Центр атаки – немного впереди игрока
+        Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
+
+        // Поиск всех врагов в радиусе атаки
+        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
         foreach (var hitCollider in hitColliders)
         {
-            Vector3 directionToTarget = hitCollider.transform.position - transform.position;
+            // Вычисляем направление к цели
+            Vector3 directionToTarget = (hitCollider.transform.position - attackOrigin.position).normalized;
             float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
 
-            if (angleToTarget < attackAngle / 2)
+            // Проверяем, находится ли враг в зоне удара
+            if (angleToTarget <= attackAngle / 2 && hitCollider.CompareTag("Enemy"))
             {
-                if (hitCollider.CompareTag("Enemy"))
+                Enemy enemy = hitCollider.GetComponent<Enemy>();
+                if (enemy != null)
                 {
-                    Enemy enemy = hitCollider.GetComponent<Enemy>();
-                    if (enemy != null)
-                    {
-                        enemy.TakeDamage(damage);
-                        Debug.Log("Katana hit: " + hitCollider.name);
-                    }
+                    enemy.TakeDamage((int)GetFinalDamage());
                 }
             }
+        }
+    }
+
+    // Визуализация зоны удара
+    private void OnDrawGizmosSelected()
+    {
+        if (attackOrigin == null) return;
+
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+        Vector3 forward = attackOrigin.forward * attackRange;
+        Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
+
+        Gizmos.DrawWireSphere(attackCenter, attackRange);
+
+        for (float angle = -attackAngle / 2; angle <= attackAngle / 2; angle += 5f)
+        {
+            Vector3 direction = Quaternion.Euler(0, angle, 0) * forward;
+            Gizmos.DrawRay(attackCenter, direction);
         }
     }
 }

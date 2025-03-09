@@ -9,17 +9,16 @@ public class MeleeEnemy : Enemy
     private float lastAttackTime;
 
     private Transform player;
-    private PlayerHealth playerHealth;
+    private PlayerStats playerStats;
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform; // Найти игрока по тегу
-        playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        playerStats = player.GetComponent<PlayerStats>();
     }
 
     private void Update()
     {
-        // Если игрок существует, ищем его
         if (player != null)
         {
             float distance = Vector3.Distance(transform.position, player.position);
@@ -37,7 +36,6 @@ public class MeleeEnemy : Enemy
 
     private void MoveToPlayer()
     {
-        // Движение к игроку
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         agent.SetDestination(player.position);
     }
@@ -46,9 +44,9 @@ public class MeleeEnemy : Enemy
     {
         lastAttackTime = Time.time;
         Debug.Log("Melee Enemy Attacked Player for " + attackDamage + " damage!");
-        if (playerHealth != null)
+        if (playerStats != null)
         {
-            playerHealth.TakeDamage(attackDamage);
+            playerStats.TakeDamage(attackDamage);
         }
     }
 }

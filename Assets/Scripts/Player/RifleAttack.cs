@@ -1,40 +1,39 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class RifleAttack : MonoBehaviour
+public class RifleAttack : WeaponBase
 {
-    [SerializeField] private int damage = 10;
     [SerializeField] private float range = 100f;
     [SerializeField] private Camera playerCamera;
-    [SerializeField] private float cooldown = 1.5f; // Время кулдауна для винтовки
-    private float nextAttackTime = 0f;
-    private Tween tween;
 
-    public void Shoot()
+    public override void Attack()
     {
-        if (Time.time < nextAttackTime) return; // Если кулдаун ещё не закончился - выходим из метода
+        if (Time.time < nextAttackTime) return;
+
+        float attackCooldown = GetAttackCooldown();
+        nextAttackTime = Time.time + attackCooldown;
 
         AudioManager.Instance.PlayShootSound();
 
-        nextAttackTime = Time.time + cooldown; // Обновляем время следующей атаки
-
-        if (tween != null)
+        if (attackTween != null && attackTween.IsActive())
         {
-            tween.Complete();
+            attackTween.Kill();
         }
-        tween = transform.DOLocalRotate(new Vector3(-45, 0, 0), cooldown / 2).SetLoops(2, LoopType.Yoyo);
 
-        RaycastHit hit;
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
+        float attackDuration = GetAttackAnimationDuration();
+
+        attackTween = transform.DOLocalRotate(new Vector3(-45, 0, 0), attackDuration)
+            .SetLoops(2, LoopType.Yoyo)
+            .SetEase(Ease.OutSine);
+
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, range))
         {
-            Debug.Log("Rifle hit: " + hit.collider.name);
             if (hit.collider.CompareTag("Enemy"))
             {
                 Enemy enemy = hit.collider.GetComponent<Enemy>();
                 if (enemy != null)
                 {
-                    enemy.TakeDamage(damage);
-                    
+                    enemy.TakeDamage((int)GetFinalDamage());
                 }
             }
         }

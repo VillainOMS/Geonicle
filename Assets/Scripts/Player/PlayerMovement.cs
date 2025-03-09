@@ -4,13 +4,13 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CharacterController controller;
-    [SerializeField] private float speed = 12f;
-    [SerializeField] private float gravity = -9.81f;
-    [SerializeField] private float jumpHeight = 3f;
+    [SerializeField] private float baseSpeed = 5f;
+    [SerializeField] private float baseJumpHeight = 2f;
+    [SerializeField] private float baseGravity = -9.81f;
 
-    [SerializeField] private float dashDistance = 10f;  // Фиксированная дальность рывка
-    [SerializeField] private float dashCooldown = 2f;   // Время отката рывка
-    [SerializeField] private float dashTime = 0.1f;     // Время, за которое происходит рывок
+    [SerializeField] private float dashDistance = 10f;
+    [SerializeField] private float dashCooldown = 2f;
+    [SerializeField] private float dashTime = 0.1f;
 
     private Vector3 velocity;
     private bool isGrounded;
@@ -21,9 +21,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
 
+    private PlayerStats playerStats;
+
+    private void Start()
+    {
+        playerStats = FindObjectOfType<PlayerStats>();
+        if (playerStats == null)
+        {
+            Debug.LogError("PlayerStats не найден!");
+        }
+    }
+
     private void Update()
     {
-        // Проверка, находится ли персонаж на земле
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0)
@@ -31,62 +41,54 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // Ввод для движения
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        // Применение нормальной скорости или рывка
+        float currentSpeed = baseSpeed * playerStats.moveSpeed; // Скорость зависит от moveSpeed игрока
+        float currentJumpHeight = baseJumpHeight * (playerStats.moveSpeed * 0.9f); // Умеренное влияние moveSpeed на прыжки
+        float currentGravity = baseGravity * (playerStats.moveSpeed * 1.1f); // Немного быстрее падает, если скорость выше
+
         if (!isDashing)
         {
-            controller.Move(move * speed * Time.deltaTime);
+            controller.Move(move * currentSpeed * Time.deltaTime);
         }
 
-        // Прыжок
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             AudioManager.Instance.PlayJumpSound();
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            velocity.y = Mathf.Sqrt(currentJumpHeight * -2f * currentGravity);
         }
 
-        // Гравитация
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y += currentGravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
-        // Рывок
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             AudioManager.Instance.PlayDashSound();
-            StartCoroutine(Dash(move));
+            StartCoroutine(Dash(move, currentSpeed));
         }
     }
 
-    // Корутин для рывка
-    private IEnumerator Dash(Vector3 moveDirection)
+    private IEnumerator Dash(Vector3 moveDirection, float currentSpeed)
     {
         isDashing = true;
         canDash = false;
 
-        // Обнуляем вертикальную скорость перед рывком
         velocity.y = 0;
 
-        // Нормализуем вектор движения, чтобы задать фиксированное расстояние рывка
         Vector3 dashDirection = moveDirection.normalized;
 
-        // Вычисляем момент окончания рывка
         float dashEndTime = Time.time + dashTime;
 
         while (Time.time < dashEndTime)
         {
-            // Перемещаем игрока на фиксированное расстояние за заданное время
             controller.Move(dashDirection * (dashDistance / dashTime) * Time.deltaTime);
             yield return null;
         }
 
         isDashing = false;
-
-        // Ожидание отката рывка
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }

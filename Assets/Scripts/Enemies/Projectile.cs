@@ -3,19 +3,19 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     private int damage; // Урон, который будет наноситься
-    private PlayerHealth playerHealth;
-    private Vector3 target; // Цель, на которую будет направлен снаряд
-    private Vector3 direction;
+    private PlayerStats playerStats; // Система здоровья игрока
+    private Vector3 direction; // Направление полета
     [SerializeField] private float speed = 20f; // Скорость снаряда
+    [SerializeField] private float lifetime = 8f; // Время жизни снаряда
 
     // Метод для установки урона и цели снаряда
-    public void Initialize(int damageAmount, Vector3 targetPosition, PlayerHealth playerHealthTarget)
+    public void Initialize(int damageAmount, Vector3 targetPosition, PlayerStats targetStats)
     {
         damage = damageAmount;
-        target = targetPosition;
-        playerHealth = playerHealthTarget;
-        direction = (target - transform.position).normalized;
-        Destroy(gameObject, 8f); // Уничтожаем снаряд через 8 секунды, если он не попал в игрока
+        playerStats = targetStats;
+        direction = (targetPosition - transform.position).normalized;
+
+        Destroy(gameObject, lifetime); // Уничтожаем снаряд через lifetime секунд, если он не попал в игрока
     }
 
     private void Update()
@@ -27,16 +27,16 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Проверка на столкновение с игроком
-        if (other.CompareTag("Player") && playerHealth != null)
+        if (other.CompareTag("Player") && playerStats != null)
         {
-            playerHealth.TakeDamage(damage);
+            playerStats.TakeDamage(damage);
+            Destroy(gameObject);
         }
-        Debug.Log(other.gameObject);
-        // Уничтожаем снаряд при столкновении с любым объектом
-        if (!other.CompareTag("Enemy"))
+
+        // Проверяем, не является ли объект союзным (например, враг)
+        if (!other.CompareTag("Enemy") && !other.CompareTag("Projectile"))
         {
             Destroy(gameObject);
         }
-        
     }
 }
