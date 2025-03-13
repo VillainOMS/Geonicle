@@ -3,15 +3,22 @@ using UnityEngine;
 
 public class KatanaAttack : WeaponBase
 {
-    [SerializeField] private float attackRange = 8f; // Дальность атаки (высота конуса)
-    [SerializeField] private float attackAngle = 90f; // Угол атаки (ширина конуса)
-    [SerializeField] private Transform attackOrigin; // Точка исхода удара (чуть впереди игрока)
+    [SerializeField] private float attackRange = 8f;
+    [SerializeField] private float attackAngle = 90f;
+    [SerializeField] private Transform attackOrigin;
 
-    private void Start()
+    [SerializeField] private float katanaDamage = 15f;
+    [SerializeField] private float katanaAttackSpeed = 1.2f;
+
+    protected override void Start()
     {
+        base.Start();
+        baseDamage = katanaDamage;
+        baseAttackSpeed = katanaAttackSpeed;
+
         if (attackOrigin == null)
         {
-            attackOrigin = transform; // Если не задано, используем позицию игрока
+            attackOrigin = transform;
         }
     }
 
@@ -34,18 +41,14 @@ public class KatanaAttack : WeaponBase
             .SetLoops(2, LoopType.Yoyo)
             .SetEase(Ease.OutSine);
 
-        // Центр атаки – немного впереди игрока
         Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
 
-        // Поиск всех врагов в радиусе атаки
         Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
         foreach (var hitCollider in hitColliders)
         {
-            // Вычисляем направление к цели
             Vector3 directionToTarget = (hitCollider.transform.position - attackOrigin.position).normalized;
             float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
 
-            // Проверяем, находится ли враг в зоне удара
             if (angleToTarget <= attackAngle / 2 && hitCollider.CompareTag("Enemy"))
             {
                 Enemy enemy = hitCollider.GetComponent<Enemy>();
@@ -54,24 +57,6 @@ public class KatanaAttack : WeaponBase
                     enemy.TakeDamage((int)GetFinalDamage());
                 }
             }
-        }
-    }
-
-    // Визуализация зоны удара
-    private void OnDrawGizmosSelected()
-    {
-        if (attackOrigin == null) return;
-
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-        Vector3 forward = attackOrigin.forward * attackRange;
-        Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
-
-        Gizmos.DrawWireSphere(attackCenter, attackRange);
-
-        for (float angle = -attackAngle / 2; angle <= attackAngle / 2; angle += 5f)
-        {
-            Vector3 direction = Quaternion.Euler(0, angle, 0) * forward;
-            Gizmos.DrawRay(attackCenter, direction);
         }
     }
 }

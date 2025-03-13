@@ -2,26 +2,29 @@ using UnityEngine;
 
 public class ArenaManager : MonoBehaviour
 {
-    [SerializeField] private SpawnPoint[] spawnPoints; // Массив точек спавна врагов на арене
-    [SerializeField] private GameObject exitDoor; // Дверь выхода с арены
-    [SerializeField] private TeleportDoor enterDoor; // Дверь входа на арену
-    [SerializeField] private Transform teleportPoint; // Дверь входа на арену
+    [SerializeField] private SpawnPoint[] spawnPoints;
+    [SerializeField] private GameObject exitDoor;
+    [SerializeField] private TeleportDoor enterDoor;
+    [SerializeField] private Transform teleportPoint;
 
     private BoxCollider exitCollider;
+    private bool hasGivenAspectPoint = false; // Флаг, чтобы начислять очки один раз
+    private bool arenaActivated = false; // Флаг, чтобы арена не начисляла очки сразу
 
     private void Start()
     {
-        // Получаем компонент BoxCollider двери и отключаем его
         exitCollider = exitDoor.GetComponent<BoxCollider>();
         if (exitCollider != null)
         {
-            exitCollider.enabled = false; // Сначала отключаем выход
+            exitCollider.enabled = false;
         }
+
+        hasGivenAspectPoint = false;
+        arenaActivated = false; // Арена НЕ активирована при старте сцены
     }
 
     private void ActivateArena()
     {
-        // Активируем врагов на всех точках спавна
         foreach (var spawnPoint in spawnPoints)
         {
             spawnPoint.SpawnEnemy();
@@ -29,14 +32,17 @@ public class ArenaManager : MonoBehaviour
 
         if (exitCollider != null)
         {
-            exitCollider.enabled = false; // Закрываем выход
+            exitCollider.enabled = false;
         }
-        Debug.Log(exitCollider.enabled);
+
+        hasGivenAspectPoint = false;
+        arenaActivated = true; // Теперь арена считается активной
     }
 
     private void Update()
     {
-        // Проверяем, остались ли активные враги на арене
+        if (!arenaActivated) return; // Если арена не активирована, ничего не делаем
+
         bool areEnemiesRemaining = false;
 
         foreach (var spawnPoint in spawnPoints)
@@ -48,16 +54,20 @@ public class ArenaManager : MonoBehaviour
             }
         }
 
-        // Активируем BoxCollider выхода, если все враги побеждены
         if (!areEnemiesRemaining && exitCollider != null)
         {
             exitCollider.enabled = true;
+
+            if (!hasGivenAspectPoint)
+            {
+                PlayerAspects.Instance?.AddAspectPoint();
+                hasGivenAspectPoint = true;
+            }
         }
         else
         {
             exitCollider.enabled = false;
         }
-               
     }
 
     private void OnEnable()
@@ -67,9 +77,9 @@ public class ArenaManager : MonoBehaviour
 
     private void OnPlayerTeleport(Transform obj)
     {
-        if (obj == teleportPoint) 
-        { 
-            ActivateArena(); 
+        if (obj == teleportPoint)
+        {
+            ActivateArena();
         }
     }
 

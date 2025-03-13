@@ -40,7 +40,6 @@ public class WeaponManager : MonoBehaviour
         if (currentWeapon != null)
         {
             currentWeapon.gameObject.SetActive(true);
-            currentWeapon.Initialize(playerStats); // Передаём PlayerStats в оружие
         }
         else
         {

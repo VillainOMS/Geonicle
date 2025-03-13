@@ -8,9 +8,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float baseJumpHeight = 2f;
     [SerializeField] private float baseGravity = -9.81f;
 
-    [SerializeField] private float dashDistance = 10f;
-    [SerializeField] private float dashCooldown = 2f;
-    [SerializeField] private float dashTime = 0.1f;
+    [SerializeField] private float baseDashDistance = 10f;
+    [SerializeField] private float baseDashCooldown = 2f;
+    [SerializeField] private float baseDashTime = 0.1f;
+
+    [Header("Влияние скорости на рывок")]
+    [SerializeField] private float dashDistanceImpact = 0.2f;  // Влияние скорости на дальность рывка
+    [SerializeField] private float dashCooldownImpact = 0.1f;  // Влияние скорости на откат рывка
+    [SerializeField] private float dashTimeImpact = 0.1f;  // Влияние скорости на время рывка
 
     private Vector3 velocity;
     private bool isGrounded;
@@ -46,9 +51,15 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        float currentSpeed = baseSpeed * playerStats.moveSpeed; // Скорость зависит от moveSpeed игрока
-        float currentJumpHeight = baseJumpHeight * (playerStats.moveSpeed * 0.9f); // Умеренное влияние moveSpeed на прыжки
-        float currentGravity = baseGravity * (playerStats.moveSpeed * 1.1f); // Немного быстрее падает, если скорость выше
+        // Используем actualMoveSpeed вместо старого moveSpeed
+        float currentSpeed = baseSpeed * playerStats.actualMoveSpeed;
+        float currentJumpHeight = baseJumpHeight * (1 + (playerStats.actualMoveSpeed - 1) * 0.9f);
+        float currentGravity = baseGravity * (1 + (playerStats.actualMoveSpeed - 1) * 1.1f);
+
+        // Дальность рывка и его скорость восстановления теперь зависят от скорости передвижения
+        float currentDashDistance = baseDashDistance * (1 + (playerStats.actualMoveSpeed - 1) * dashDistanceImpact);
+        float currentDashCooldown = baseDashCooldown / (1 + (playerStats.actualMoveSpeed - 1) * dashCooldownImpact);
+        float currentDashTime = baseDashTime / (1 + (playerStats.actualMoveSpeed - 1) * dashTimeImpact);
 
         if (!isDashing)
         {
@@ -67,11 +78,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             AudioManager.Instance.PlayDashSound();
-            StartCoroutine(Dash(move, currentSpeed));
+            StartCoroutine(Dash(move, currentDashDistance, currentDashTime, currentDashCooldown));
         }
     }
 
-    private IEnumerator Dash(Vector3 moveDirection, float currentSpeed)
+    private IEnumerator Dash(Vector3 moveDirection, float dashDistance, float dashTime, float dashCooldown)
     {
         isDashing = true;
         canDash = false;
@@ -79,7 +90,6 @@ public class PlayerMovement : MonoBehaviour
         velocity.y = 0;
 
         Vector3 dashDirection = moveDirection.normalized;
-
         float dashEndTime = Time.time + dashTime;
 
         while (Time.time < dashEndTime)

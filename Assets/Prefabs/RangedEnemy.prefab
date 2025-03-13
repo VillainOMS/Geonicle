@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7028369681513095029}
-  - component: {fileID: 594207618565655592}
   - component: {fileID: 4400955148930545243}
   - component: {fileID: 4257264370284698312}
   - component: {fileID: 7780493906902624351}
@@ -37,33 +36,6 @@ Transform:
   - {fileID: 7559251068310849399}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &594207618565655592
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 795981397686077357}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &4400955148930545243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 25
+  damageTextPrefab: {fileID: 758295121553661668, guid: d9008ddfa97b6bf45ab7307a06131016, type: 3}
   shootPoint: {fileID: 7559251068310849399}
   projectilePrefab: {fileID: 7889723361684904537, guid: 27e1fedbcfad094449b3db9a23317543, type: 3}
   damage: 10

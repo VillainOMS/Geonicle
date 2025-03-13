@@ -3,15 +3,16 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    public float baseDamage = 10f;
-    public float baseAttackSpeed = 1f;
+    protected float baseDamage = 10f; 
+    protected float baseAttackSpeed = 1f; 
+
     protected PlayerStats playerStats;
     protected float nextAttackTime = 0f;
     protected Tween attackTween;
 
-    public void Initialize(PlayerStats stats)
+    protected virtual void Start()
     {
-        playerStats = stats;
+        playerStats = FindObjectOfType<PlayerStats>();
         if (playerStats == null)
         {
             Debug.LogError($"{gameObject.name}: PlayerStats не найден!");
@@ -20,12 +21,12 @@ public abstract class WeaponBase : MonoBehaviour
 
     public float GetFinalDamage()
     {
-        return baseDamage * (playerStats != null ? playerStats.damageMultiplier : 1f);
+        return baseDamage * (playerStats != null ? playerStats.actualDamageMultiplier : 1f);
     }
 
     public float GetFinalAttackSpeed()
     {
-        return baseAttackSpeed * playerStats.attackSpeedMultiplier;
+        return baseAttackSpeed * (playerStats != null ? playerStats.actualAttackSpeedMultiplier : 1f);
     }
 
     public float GetAttackCooldown()
@@ -33,10 +34,9 @@ public abstract class WeaponBase : MonoBehaviour
         return 1f / GetFinalAttackSpeed();
     }
 
-    // ƒелаем анимацию чуть короче, чтобы не перекрывала следующую атаку
     public float GetAttackAnimationDuration()
     {
-        return GetAttackCooldown() * 0.5f; // “.к. Yoyo повтор€ет анимацию дважды, делим пополам
+        return GetAttackCooldown() * 0.5f;
     }
 
     public abstract void Attack();
