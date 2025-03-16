@@ -59,4 +59,22 @@ public class KatanaAttack : WeaponBase
             }
         }
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackOrigin == null) return;
+
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); // Красный цвет
+        Vector3 forward = attackOrigin.forward * attackRange;
+        Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
+
+        Gizmos.DrawWireSphere(attackCenter, attackRange); // Основная зона атаки
+
+        for (float angle = -attackAngle / 2; angle <= attackAngle / 2; angle += 5f)
+        {
+            Vector3 direction = Quaternion.Euler(0, angle, 0) * forward;
+            Gizmos.DrawRay(attackCenter, direction);
+        }
+    }
+
 }

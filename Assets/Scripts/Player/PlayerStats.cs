@@ -10,7 +10,7 @@ public class PlayerStats : MonoBehaviour
     [Header("Базовые характеристики")]
     [SerializeField] public float baseDamageMultiplier = 1.0f;
     [SerializeField] public int baseMaxHealth = 100;
-    [SerializeField] public float baseMoveSpeed = 3.0f;
+    [SerializeField] public float baseMoveSpeed = 2.7f;
     [SerializeField] public float baseAttackSpeedMultiplier = 1.0f;
 
     // Фактические показатели (учитывают импланты)
@@ -121,6 +121,24 @@ public class PlayerStats : MonoBehaviour
 
         RecalculateActualStats(); // После изменений пересчитываем фактические характеристики
         UpdateHealthBar(); // Обновляем UI хелсбара
+    }
+
+    public void ApplyImplantEffect(Implant implant)
+    {
+        if (implant == null) return;
+
+        implant.ApplyEffect(this, GetComponent<PlayerAbilities>());
+        Debug.Log($"Применён имплант: {implant.Name}");
+        RecalculateActualStats();
+    }
+
+    public void RemoveImplantEffect(Implant implant)
+    {
+        if (implant == null) return;
+
+        implant.RemoveEffect(this, GetComponent<PlayerAbilities>());
+        Debug.Log($"Удалён имплант: {implant.Name}");
+        RecalculateActualStats();
     }
 
     // Фактические характеристики пересчитываются с учётом имплантов

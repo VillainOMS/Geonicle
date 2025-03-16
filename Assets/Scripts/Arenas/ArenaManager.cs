@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ArenaManager : MonoBehaviour
 {
@@ -8,8 +9,9 @@ public class ArenaManager : MonoBehaviour
     [SerializeField] private Transform teleportPoint;
 
     private BoxCollider exitCollider;
-    private bool hasGivenAspectPoint = false; // Флаг, чтобы начислять очки один раз
-    private bool arenaActivated = false; // Флаг, чтобы арена не начисляла очки сразу
+    private bool hasGivenAspectPoint = false;
+    private bool hasGivenImplant = false;
+    private bool arenaActivated = false;
 
     private void Start()
     {
@@ -20,7 +22,8 @@ public class ArenaManager : MonoBehaviour
         }
 
         hasGivenAspectPoint = false;
-        arenaActivated = false; // Арена НЕ активирована при старте сцены
+        hasGivenImplant = false;
+        arenaActivated = false;
     }
 
     private void ActivateArena()
@@ -36,12 +39,13 @@ public class ArenaManager : MonoBehaviour
         }
 
         hasGivenAspectPoint = false;
-        arenaActivated = true; // Теперь арена считается активной
+        hasGivenImplant = false;
+        arenaActivated = true;
     }
 
     private void Update()
     {
-        if (!arenaActivated) return; // Если арена не активирована, ничего не делаем
+        if (!arenaActivated) return;
 
         bool areEnemiesRemaining = false;
 
@@ -63,12 +67,59 @@ public class ArenaManager : MonoBehaviour
                 PlayerAspects.Instance?.AddAspectPoint();
                 hasGivenAspectPoint = true;
             }
+
+            if (!hasGivenImplant)
+            {
+                GiveRandomImplantToPlayer();
+                hasGivenImplant = true;
+            }
         }
         else
         {
             exitCollider.enabled = false;
         }
     }
+
+    private void GiveRandomImplantToPlayer()
+    {
+        if (ImplantDatabase.Instance == null)
+        {
+            Debug.LogError("ImplantDatabase не найден!");
+            return;
+        }
+        if (PlayerInventory.Instance == null)
+        {
+            Debug.LogError("PlayerInventory не найден!");
+            return;
+        }
+
+        List<Implant> allImplants = ImplantDatabase.Instance.GetAllImplants();
+        List<Implant> availableImplants = new List<Implant>();
+
+        foreach (Implant implant in allImplants)
+        {
+            // правильная проверка
+            if (!PlayerInventory.Instance.HasImplantAnywhere(implant))
+            {
+                availableImplants.Add(implant);
+            }
+        }
+
+        if (availableImplants.Count == 0)
+        {
+            Debug.Log("Все импланты уже выданы. Новые импланты не выдаются.");
+            return;
+        }
+
+        Implant randomImplant = availableImplants[Random.Range(0, availableImplants.Count)];
+        PlayerInventory.Instance.AddNewImplant(randomImplant);
+        UIManager.Instance.ShowImplantNotification(randomImplant);
+
+        Debug.Log($"Игрок получил имплант: {randomImplant.Name}");
+    }
+
+
+
 
     private void OnEnable()
     {

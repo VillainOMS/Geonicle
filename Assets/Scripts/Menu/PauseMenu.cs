@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -11,8 +12,8 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Slider sfxVolume;
     [SerializeField] private Slider musicVolume;
     [SerializeField] private AudioMixer audioMixer;
-
-    private bool isPaused = false;
+    [SerializeField] private GameObject altarUI;
+    [SerializeField] private GameObject weaponUI;
 
     private void Start()
     {
@@ -20,11 +21,21 @@ public class PauseMenu : MonoBehaviour
         musicVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("MusicVolume", -80 + Value * 80); });
     }
 
+
+    private bool blockPause = false;
+
     private void Update()
     {
+        if (blockPause) return; 
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
+            if (altarUI.activeSelf || weaponUI.activeSelf)
+            {
+                return; // Если открыто меню алтаря или оружия — не вызываем паузу
+            }
+
+            if (pausePanel.activeSelf)
             {
                 Resume();
             }
@@ -35,6 +46,18 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    public void BlockPauseForOneFrame()
+    {
+        StartCoroutine(ResetPauseBlock());
+    }
+
+    private IEnumerator ResetPauseBlock()
+    {
+        blockPause = true;
+        yield return null;
+        blockPause = false;
+    }
+
     public void Resume()
     {
         pausePanel.SetActive(false); // Отключаем основной Panel
@@ -43,7 +66,6 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked; // Скрываем курсор
         Cursor.visible = false;
-        isPaused = false;
     }
 
     private void Pause()
@@ -54,7 +76,6 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None; // Показываем курсор
         Cursor.visible = true;
-        isPaused = true;
     }
 
     public void OpenSettings()
