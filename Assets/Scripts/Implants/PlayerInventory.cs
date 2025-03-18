@@ -9,6 +9,8 @@ public class PlayerInventory : MonoBehaviour
     private List<Implant> equippedImplants = new List<Implant>();
 
     public InventoryManager inventoryManager;
+    private PlayerStats playerStats;
+    private PlayerAbilities playerAbilities;
 
     private void Awake()
     {
@@ -16,6 +18,9 @@ public class PlayerInventory : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+        playerStats = PlayerStats.Instance;
+        playerAbilities = FindObjectOfType<PlayerAbilities>();
     }
 
     public void SetInventoryManager(InventoryManager manager)
@@ -95,6 +100,8 @@ public class PlayerInventory : MonoBehaviour
         if (!equippedImplants.Contains(implant))
         {
             equippedImplants.Add(implant);
+            Debug.Log($"[EquipImplant] Экипирован имплант: {implant.Name}. Пересчитываем характеристики.");
+            PlayerStats.Instance.RecalculateActualStats();
         }
     }
 
@@ -103,7 +110,41 @@ public class PlayerInventory : MonoBehaviour
         if (equippedImplants.Contains(implant))
         {
             equippedImplants.Remove(implant);
+            Debug.Log($"[UnequipImplant] Снят имплант: {implant.Name}. Пересчитываем характеристики.");
+            PlayerStats.Instance.RecalculateActualStats();
         }
+    }
+
+    private void ApplyImplantEffects(Implant implant)
+    {
+        bool isEnhanced = implant.CheckIfEnhanced();
+        implant.SetEnhanced(isEnhanced);
+
+        Debug.Log($"Применение импланта: {implant.Name}, Усиленный: {isEnhanced}");
+
+        implant.ApplyEffect(playerStats, playerAbilities);
+        playerStats.RecalculateActualStats();
+        Debug.Log($"После применения: Урон={playerStats.actualDamageMultiplier}, Здоровье={playerStats.actualMaxHealth}, Скорость={playerStats.actualMoveSpeed}");
+    }
+
+    private void RemoveImplantEffects(Implant implant)
+    {
+        implant.RemoveEffect(playerStats, playerAbilities);
+        Debug.Log($"Снят имплант: {implant.Name}");
+    }
+
+    public List<Implant> GetEquippedImplants()
+    {
+        return new List<Implant>(equippedImplants);
+    }
+
+    public PlayerAbilities GetPlayerAbilities()
+    {
+        if (playerAbilities == null)
+        {
+            playerAbilities = FindObjectOfType<PlayerAbilities>();
+        }
+        return playerAbilities;
     }
 
 }

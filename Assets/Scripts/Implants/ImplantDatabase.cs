@@ -33,30 +33,10 @@ public class ImplantDatabase : MonoBehaviour
             "Увеличивает урон на 25%, но снижает здоровье на 50%.",
             "Скелет",
             glassSkeletonIcon,
-            (playerStats) =>
-            {
-                playerStats.actualDamageMultiplier += 0.25f;
-                playerStats.actualMaxHealth = Mathf.RoundToInt(playerStats.actualMaxHealth * 0.5f);
-            },
-            (playerStats) =>
-            {
-                playerStats.actualDamageMultiplier -= 0.25f;
-                playerStats.actualMaxHealth = Mathf.RoundToInt(playerStats.actualMaxHealth * 2f);
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetWaterLevel() >= 2 && PlayerAspects.Instance.GetMetalLevel() >= 2)
-                {
-                    playerStats.actualMaxHealth = Mathf.RoundToInt(playerStats.actualMaxHealth * 1.5f);
-                }
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetWaterLevel() >= 2 && PlayerAspects.Instance.GetMetalLevel() >= 2)
-                {
-                    playerStats.actualMaxHealth = Mathf.RoundToInt(playerStats.actualMaxHealth / 1.5f);
-                }
-            }
+            2, 0, 2, 0, // Требования аспектов
+            0.25f, -0.5f, 0f, 0f, // Процентные бонусы (урон, здоровье, скорость, атака)
+            (playerStats) => { },
+            (playerStats) => { }
         ));
 
         implants.Add(new Implant(
@@ -65,28 +45,12 @@ public class ImplantDatabase : MonoBehaviour
             "Увеличивает скорость передвижения на 20%.",
             "Ноги",
             jetLegsIcon,
-            (playerStats) =>
-            {
-                playerStats.actualMoveSpeed += 0.2f;
-            },
-            (playerStats) =>
-            {
-                playerStats.actualMoveSpeed -= 0.2f;
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetWaterLevel() >= 1 && PlayerAspects.Instance.GetFireLevel() >= 2)
-                {
-                    playerStats.actualMoveSpeed += 0.15f;
-                }
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetWaterLevel() >= 1 && PlayerAspects.Instance.GetFireLevel() >= 2)
-                {
-                    playerStats.actualMoveSpeed -= 0.15f;
-                }
-            }
+            1, 2, 0, 0,
+            0f, 0f, 0.2f, 0f,
+            (playerStats) => { },
+            (playerStats) => { },
+            (abilities) => abilities.EnableDoubleJump(),
+            (abilities) => abilities.DisableDoubleJump()
         ));
 
         implants.Add(new Implant(
@@ -95,30 +59,10 @@ public class ImplantDatabase : MonoBehaviour
             "Увеличивает здоровье на 20%.",
             "Сердце",
             steamHeartIcon,
-            (playerStats) =>
-            {
-                playerStats.actualMaxHealth = Mathf.RoundToInt(playerStats.actualMaxHealth * 1.2f);
-            },
-            (playerStats) =>
-            {
-                playerStats.actualMaxHealth = Mathf.RoundToInt(playerStats.actualMaxHealth / 1.2f);
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetFireLevel() >= 3 && PlayerAspects.Instance.GetWaterLevel() >= 2)
-                {
-                    playerStats.actualMoveSpeed += 0.15f;
-                    playerStats.actualAttackSpeedMultiplier += 0.15f;
-                }
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetFireLevel() >= 3 && PlayerAspects.Instance.GetWaterLevel() >= 2)
-                {
-                    playerStats.actualMoveSpeed -= 0.15f;
-                    playerStats.actualAttackSpeedMultiplier -= 0.15f;
-                }
-            }
+            3, 2, 0, 0,
+            0f, 0.2f, 0f, 0f,
+            (playerStats) => { },
+            (playerStats) => { }
         ));
 
         implants.Add(new Implant(
@@ -127,28 +71,10 @@ public class ImplantDatabase : MonoBehaviour
             "Увеличивает урон на 20%.",
             "Глаза",
             trackingEyesIcon,
-            (playerStats) =>
-            {
-                playerStats.actualDamageMultiplier += 0.2f;
-            },
-            (playerStats) =>
-            {
-                playerStats.actualDamageMultiplier -= 0.2f;
-            },
-            (playerStats) => 
-            {
-                if (PlayerAspects.Instance.GetShockLevel() >= 5)
-                {
-                    playerStats.actualDamageMultiplier += 0.1f;
-                }
-            },
-            (playerStats) =>
-            {
-                if (PlayerAspects.Instance.GetShockLevel() >= 5)
-                {
-                    playerStats.actualDamageMultiplier -= 0.1f;
-                }
-            }
+            0, 0, 0, 5,
+            0.2f, 0f, 0f, 0f,
+            (playerStats) => { },
+            (playerStats) => { }
         ));
     }
 

@@ -61,14 +61,6 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    private void UpdateHealthBar()
-    {
-        if (healthBar != null)
-        {
-            healthBar.value = (float)currentHealth / actualMaxHealth;
-        }
-    }
-
     private void Die()
     {
         Debug.Log("Игрок погиб!");
@@ -82,73 +74,83 @@ public class PlayerStats : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-    public void RestartGame()
+    public void ApplyPercentageBonus(float damageBonus, float healthBonus, float speedBonus, float attackSpeedBonus)
     {
-        gameOverPanel.SetActive(false);
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        SceneManager.LoadScene("GameScene");
+        actualDamageMultiplier *= (1 + damageBonus);
+        actualMaxHealth = Mathf.RoundToInt(actualMaxHealth * (1 + healthBonus));
+        actualMoveSpeed *= (1 + speedBonus);
+        actualAttackSpeedMultiplier *= (1 + attackSpeedBonus);
     }
 
-    public void LoadMainMenu()
+    public void RemovePercentageBonus(float damageBonus, float healthBonus, float speedBonus, float attackSpeedBonus)
     {
-        gameOverPanel.SetActive(false);
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        SceneManager.LoadScene("MainMenu");
+        actualDamageMultiplier /= (1 + damageBonus);
+        actualMaxHealth = Mathf.RoundToInt(actualMaxHealth / (1 + healthBonus));
+        actualMoveSpeed /= (1 + speedBonus);
+        actualAttackSpeedMultiplier /= (1 + attackSpeedBonus);
     }
 
-    // Аспекты изменяют ТОЛЬКО базовые характеристики
+    public void UpdateHealthBar()
+    {
+        if (healthBar != null)
+        {
+            healthBar.value = (float)currentHealth / actualMaxHealth;
+        }
+    }
+
     public void ApplyAspectBonuses(int fireLevel, int metalLevel, int waterLevel, int shockLevel)
     {
-        int oldMaxHealth = baseMaxHealth; // Сохраняем старое максимальное здоровье
+        int oldMaxHealth = baseMaxHealth;
 
         baseDamageMultiplier = 1.0f + fireLevel * PlayerAspects.Instance.GetFireImpact();
         baseMaxHealth = 100 + Mathf.RoundToInt(metalLevel * PlayerAspects.Instance.GetMetalImpact() * 100);
         baseMoveSpeed = 3.0f + waterLevel * PlayerAspects.Instance.GetWaterImpact();
         baseAttackSpeedMultiplier = 1.0f + shockLevel * PlayerAspects.Instance.GetShockImpact();
 
-        // Разница в макс. здоровье
         int healthIncrease = baseMaxHealth - oldMaxHealth;
 
         if (healthIncrease > 0)
         {
-            currentHealth += healthIncrease; // Увеличиваем текущее здоровье на разницу
-            currentHealth = Mathf.Clamp(currentHealth, 0, baseMaxHealth); // Ограничиваем в пределах нового макс. здоровья
+            currentHealth += healthIncrease;
+            currentHealth = Mathf.Clamp(currentHealth, 0, baseMaxHealth);
         }
 
-        RecalculateActualStats(); // После изменений пересчитываем фактические характеристики
-        UpdateHealthBar(); // Обновляем UI хелсбара
-    }
-
-    public void ApplyImplantEffect(Implant implant)
-    {
-        if (implant == null) return;
-
-        implant.ApplyEffect(this, GetComponent<PlayerAbilities>());
-        Debug.Log($"Применён имплант: {implant.Name}");
         RecalculateActualStats();
+        UpdateHealthBar();
     }
 
-    public void RemoveImplantEffect(Implant implant)
+    public void RecalculateActualStats()
     {
-        if (implant == null) return;
+        Debug.Log("=== RecalculateActualStats вызван ===");
+        Debug.Log("=== Пересчёт характеристик ===");
+        Debug.Log($"Базовые характеристики ДО аспектов: Урон {baseDamageMultiplier}, Здоровье {baseMaxHealth}, Скорость {baseMoveSpeed}");
 
-        implant.RemoveEffect(this, GetComponent<PlayerAbilities>());
-        Debug.Log($"Удалён имплант: {implant.Name}");
-        RecalculateActualStats();
+        // 1. Применяем бонусы аспектов
+        baseDamageMultiplier = 1.0f + PlayerAspects.Instance.GetFireLevel() * PlayerAspects.Instance.GetFireImpact();
+        baseMaxHealth = 100 + Mathf.RoundToInt(PlayerAspects.Instance.GetMetalLevel() * PlayerAspects.Instance.GetMetalImpact() * 100);
+        baseMoveSpeed = 3.0f + PlayerAspects.Instance.GetWaterLevel() * PlayerAspects.Instance.GetWaterImpact();
+        baseAttackSpeedMultiplier = 1.0f + PlayerAspects.Instance.GetShockLevel() * PlayerAspects.Instance.GetShockImpact();
+
+        Debug.Log($"После аспектов: Урон {baseDamageMultiplier}, Здоровье {baseMaxHealth}, Скорость {baseMoveSpeed}");
+
+        // 2. Начинаем фактические характеристики с изменённых аспектами значений
+        actualDamageMultiplier = baseDamageMultiplier;
+        actualMaxHealth = baseMaxHealth;
+        actualMoveSpeed = baseMoveSpeed;
+        actualAttackSpeedMultiplier = baseAttackSpeedMultiplier;
+
+        // 3. Добавляем процентные бонусы от имплантов
+        foreach (Implant implant in PlayerInventory.Instance.GetEquippedImplants())
+        {
+            Debug.Log($"Применяем имплант {implant.Name} -> Урон: +{implant.GetDamageBonus() * 100}%, Здоровье: +{implant.GetHealthBonus() * 100}%, Скорость: +{implant.GetSpeedBonus() * 100}%");
+
+            actualDamageMultiplier *= (1 + implant.GetDamageBonus());
+            actualMaxHealth = Mathf.RoundToInt(actualMaxHealth * (1 + implant.GetHealthBonus()));
+            actualMoveSpeed *= (1 + implant.GetSpeedBonus());
+            actualAttackSpeedMultiplier *= (1 + implant.GetAttackSpeedBonus());
+        }
+
+        Debug.Log($"Финальные характеристики: Урон {actualDamageMultiplier}, Здоровье {actualMaxHealth}, Скорость {actualMoveSpeed}, Скорость атаки {actualAttackSpeedMultiplier}");
     }
 
-    // Фактические характеристики пересчитываются с учётом имплантов
-    public void RecalculateActualStats(float damageBonus = 0f, float healthBonus = 0f, float speedBonus = 0f, float attackSpeedBonus = 0f)
-    {
-        actualDamageMultiplier = baseDamageMultiplier + damageBonus;
-        actualMaxHealth = baseMaxHealth + Mathf.RoundToInt(healthBonus);
-        actualMoveSpeed = baseMoveSpeed + speedBonus;
-        actualAttackSpeedMultiplier = baseAttackSpeedMultiplier + attackSpeedBonus;
-
-        Debug.Log($"Фактические характеристики пересчитаны: Урон {actualDamageMultiplier}, Здоровье {actualMaxHealth}, Скорость {actualMoveSpeed}, Скорость атаки {actualAttackSpeedMultiplier}");
-    }
 }

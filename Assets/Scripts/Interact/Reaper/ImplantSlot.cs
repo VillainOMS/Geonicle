@@ -18,7 +18,7 @@ public class ImplantSlot : MonoBehaviour, IDropHandler
             }
 
             currentImplant = implantUI.ImplantData;
-            PlayerStats.Instance.ApplyImplantEffect(currentImplant);
+            PlayerInventory.Instance.EquipImplant(currentImplant);
 
             PlayerInventory.Instance.RemoveImplant(currentImplant); // Удаляем из инвентаря
 
@@ -35,16 +35,14 @@ public class ImplantSlot : MonoBehaviour, IDropHandler
         implantUI.transform.SetParent(transform);
         implantUI.transform.localPosition = Vector3.zero;
 
-        PlayerStats.Instance.ApplyImplantEffect(currentImplant);
-        PlayerInventory.Instance.EquipImplant(currentImplant); // Важно: добавляем сюда!
+        PlayerInventory.Instance.EquipImplant(currentImplant); 
     }
 
     public void RemoveImplant()
     {
         if (currentImplant != null)
         {
-            PlayerStats.Instance.RemoveImplantEffect(currentImplant);
-            PlayerInventory.Instance.UnequipImplant(currentImplant); // Убираем из экипированных
+            PlayerInventory.Instance.UnequipImplant(currentImplant);
             PlayerInventory.Instance.ReturnImplantToInventory(currentImplant);
             currentImplant = null;
         }

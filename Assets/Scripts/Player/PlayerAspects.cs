@@ -38,6 +38,8 @@ public class PlayerAspects : MonoBehaviour
         UpdateUI();
     }
 
+
+
     public void AddAspectPoint()
     {
         aspectPoints++;
