@@ -13,9 +13,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float baseDashTime = 0.1f;
 
     [Header("Влияние скорости на рывок")]
-    [SerializeField] private float dashDistanceImpact = 0.2f;  // Влияние скорости на дальность рывка
-    [SerializeField] private float dashCooldownImpact = 0.1f;  // Влияние скорости на откат рывка
-    [SerializeField] private float dashTimeImpact = 0.1f;  // Влияние скорости на время рывка
+    [SerializeField] private float dashDistanceImpact = 0.2f;
+    [SerializeField] private float dashCooldownImpact = 0.1f;
+    [SerializeField] private float dashTimeImpact = 0.1f;
 
     private Vector3 velocity;
     private bool isGrounded;
@@ -27,14 +27,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
 
     private PlayerStats playerStats;
+    private PlayerAbilities playerAbilities;
 
     private void Start()
     {
         playerStats = FindObjectOfType<PlayerStats>();
-        if (playerStats == null)
-        {
-            Debug.LogError("PlayerStats не найден!");
-        }
+        playerAbilities = FindObjectOfType<PlayerAbilities>();
+
+        if (playerStats == null) Debug.LogError("PlayerStats не найден!");
+        if (playerAbilities == null) Debug.LogError("PlayerAbilities не найден!");
+        else Debug.Log("PlayerAbilities подключён к PlayerMovement");
     }
 
     private void Update()
@@ -44,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
+            playerAbilities?.ResetDoubleJump();
         }
 
         float x = Input.GetAxis("Horizontal");
@@ -51,12 +54,10 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        // Используем actualMoveSpeed вместо старого moveSpeed
         float currentSpeed = baseSpeed * playerStats.actualMoveSpeed;
         float currentJumpHeight = baseJumpHeight * (1 + (playerStats.actualMoveSpeed - 1) * 0.9f);
         float currentGravity = baseGravity * (1 + (playerStats.actualMoveSpeed - 1) * 1.1f);
 
-        // Дальность рывка и его скорость восстановления теперь зависят от скорости передвижения
         float currentDashDistance = baseDashDistance * (1 + (playerStats.actualMoveSpeed - 1) * dashDistanceImpact);
         float currentDashCooldown = baseDashCooldown / (1 + (playerStats.actualMoveSpeed - 1) * dashCooldownImpact);
         float currentDashTime = baseDashTime / (1 + (playerStats.actualMoveSpeed - 1) * dashTimeImpact);
@@ -66,10 +67,20 @@ public class PlayerMovement : MonoBehaviour
             controller.Move(move * currentSpeed * Time.deltaTime);
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump"))
         {
-            AudioManager.Instance.PlayJumpSound();
-            velocity.y = Mathf.Sqrt(currentJumpHeight * -2f * currentGravity);
+            Debug.Log($"Jump attempt. isGrounded={isGrounded}, canDoubleJump={playerAbilities?.canDoubleJump}, hasDoubleJumped={playerAbilities?.hasDoubleJumped}");
+
+            if (isGrounded)
+            {
+                AudioManager.Instance.PlayJumpSound();
+                velocity.y = Mathf.Sqrt(currentJumpHeight * -2f * currentGravity);
+            }
+            else if (playerAbilities != null && playerAbilities.TryUseDoubleJump())
+            {
+                AudioManager.Instance.PlayJumpSound();
+                velocity.y = Mathf.Sqrt(currentJumpHeight * -2f * currentGravity);
+            }
         }
 
         velocity.y += currentGravity * Time.deltaTime;

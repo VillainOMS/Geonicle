@@ -20476,7 +20476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 072fc1caa42079146884c7d5d9af93b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aspectPoints: 3
+  aspectPoints: 0
   aspectPointsText: {fileID: 1018000964}
   aspectPointsUI: {fileID: 691878803}
   fireImpact: 0.25

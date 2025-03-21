@@ -2,17 +2,11 @@ using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour
 {
-    private bool canDoubleJump = false;
+    public bool canDoubleJump = false;
+    public bool hasDoubleJumped = false;
+
     private bool hasDashDamage = false;
     private float dashDamageAmount = 10f;
-
-    private void Update()
-    {
-        if (canDoubleJump && Input.GetButtonDown("Jump"))
-        {
-            PerformDoubleJump();
-        }
-    }
 
     public void EnableDoubleJump()
     {
@@ -39,9 +33,19 @@ public class PlayerAbilities : MonoBehaviour
         Debug.Log("Урон от рывка отключён.");
     }
 
-    private void PerformDoubleJump()
+    public void ResetDoubleJump()
     {
-        Debug.Log("Игрок сделал двойной прыжок!");
-        // Здесь можно добавить изменение физики прыжка
+        hasDoubleJumped = false;
+    }
+
+    public bool TryUseDoubleJump()
+    {
+        if (canDoubleJump && !hasDoubleJumped)
+        {
+            hasDoubleJumped = true;
+            Debug.Log("Игрок сделал двойной прыжок!");
+            return true;
+        }
+        return false;
     }
 }

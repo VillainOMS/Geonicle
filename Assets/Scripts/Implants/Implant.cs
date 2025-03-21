@@ -27,11 +27,17 @@ public class Implant
     private System.Action<PlayerAbilities> applyAbilitiesEffect;
     private System.Action<PlayerAbilities> removeAbilitiesEffect;
 
+    // Добавляем улучшенные эффекты
+    private System.Action<PlayerStats> applyEnhancedEffect;
+    private System.Action<PlayerStats> removeEnhancedEffect;
+
     public Implant(int id, string name, string description, string slot, Sprite icon,
                    int requiredFire, int requiredWater, int requiredMetal, int requiredShock,
                    float damageBonus, float healthBonus, float speedBonus, float attackSpeedBonus,
                    System.Action<PlayerStats> applySpecialEffect,
                    System.Action<PlayerStats> removeSpecialEffect,
+                   System.Action<PlayerStats> applyEnhancedEffect, // Добавлено
+                   System.Action<PlayerStats> removeEnhancedEffect, // Добавлено
                    System.Action<PlayerAbilities> applyAbilitiesEffect = null,
                    System.Action<PlayerAbilities> removeAbilitiesEffect = null)
     {
@@ -55,13 +61,22 @@ public class Implant
         this.removeSpecialEffect = removeSpecialEffect;
         this.applyAbilitiesEffect = applyAbilitiesEffect;
         this.removeAbilitiesEffect = removeAbilitiesEffect;
+
+        this.applyEnhancedEffect = applyEnhancedEffect;
+        this.removeEnhancedEffect = removeEnhancedEffect;
     }
 
     public void ApplyEffect(PlayerStats playerStats, PlayerAbilities abilities)
     {
-        Debug.Log($"[ApplyEffect] {Name}: Применяем бонусы");
+        Debug.Log($"[ApplyEffect] {Name}: Применяем бонусы. Усиленный: {IsEnhanced}");
+
         playerStats.ApplyPercentageBonus(damageBonus, healthBonus, speedBonus, attackSpeedBonus);
         applySpecialEffect?.Invoke(playerStats);
+
+        if (IsEnhanced)
+        {
+            applyEnhancedEffect?.Invoke(playerStats);
+        }
 
         if (abilities != null)
         {
@@ -69,16 +84,52 @@ public class Implant
         }
     }
 
-
     public void RemoveEffect(PlayerStats playerStats, PlayerAbilities abilities)
     {
+        Debug.Log($"[RemoveEffect] {Name}: IsEnhanced = {IsEnhanced}");
+
         playerStats.RemovePercentageBonus(damageBonus, healthBonus, speedBonus, attackSpeedBonus);
         removeSpecialEffect?.Invoke(playerStats);
+
+        if (IsEnhanced)
+        {
+            Debug.Log($"[RemoveEffect] {Name}: Вызов RemoveEnhancedEffect");
+            removeEnhancedEffect?.Invoke(playerStats);
+        }
 
         if (abilities != null)
         {
             removeAbilitiesEffect?.Invoke(abilities);
         }
+    }
+
+    public void ApplyEnhancedEffect(PlayerStats playerStats)
+    {
+        applyEnhancedEffect?.Invoke(playerStats);
+
+        PlayerAbilities abilities = playerStats.GetComponent<PlayerAbilities>();
+        applyAbilitiesEffect?.Invoke(abilities);
+
+        Debug.Log($"[ApplyEnhancedEffect] {Name}: Улучшенный эффект применён.");
+    }
+
+    public void RemoveEnhancedEffect(PlayerStats playerStats)
+    {
+        removeEnhancedEffect?.Invoke(playerStats);
+
+        PlayerAbilities abilities = playerStats.GetComponent<PlayerAbilities>();
+
+        if (removeAbilitiesEffect != null)
+        {
+            Debug.Log("[RemoveEnhancedEffect] Нашли removeAbilitiesEffect");
+            removeAbilitiesEffect.Invoke(abilities);
+        }
+        else
+        {
+            Debug.Log("[RemoveEnhancedEffect] removeAbilitiesEffect = NULL");
+        }
+
+        Debug.Log($"[RemoveEnhancedEffect] {Name}: Улучшенный эффект отключён.");
     }
 
     public void SetEnhanced(bool enhanced)

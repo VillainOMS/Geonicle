@@ -100,38 +100,32 @@ public class PlayerInventory : MonoBehaviour
         if (!equippedImplants.Contains(implant))
         {
             equippedImplants.Add(implant);
-            Debug.Log($"[EquipImplant] Экипирован имплант: {implant.Name}. Пересчитываем характеристики.");
+
+            // Проверяем, соответствует ли имплант требованиям аспектов
+            bool isEnhanced = implant.CheckIfEnhanced();
+            implant.SetEnhanced(isEnhanced);
+
+            Debug.Log($"[EquipImplant] Экипирован имплант: {implant.Name}. Усиленная версия: {isEnhanced}");
+
             PlayerStats.Instance.RecalculateActualStats();
         }
     }
+
 
     public void UnequipImplant(Implant implant)
     {
         if (equippedImplants.Contains(implant))
         {
-            equippedImplants.Remove(implant);
             Debug.Log($"[UnequipImplant] Снят имплант: {implant.Name}. Пересчитываем характеристики.");
+
+            implant.RemoveEffect(playerStats, playerAbilities);
+            equippedImplants.Remove(implant);
+
+            implant.SetEnhanced(false);
             PlayerStats.Instance.RecalculateActualStats();
         }
     }
 
-    private void ApplyImplantEffects(Implant implant)
-    {
-        bool isEnhanced = implant.CheckIfEnhanced();
-        implant.SetEnhanced(isEnhanced);
-
-        Debug.Log($"Применение импланта: {implant.Name}, Усиленный: {isEnhanced}");
-
-        implant.ApplyEffect(playerStats, playerAbilities);
-        playerStats.RecalculateActualStats();
-        Debug.Log($"После применения: Урон={playerStats.actualDamageMultiplier}, Здоровье={playerStats.actualMaxHealth}, Скорость={playerStats.actualMoveSpeed}");
-    }
-
-    private void RemoveImplantEffects(Implant implant)
-    {
-        implant.RemoveEffect(playerStats, playerAbilities);
-        Debug.Log($"Снят имплант: {implant.Name}");
-    }
 
     public List<Implant> GetEquippedImplants()
     {

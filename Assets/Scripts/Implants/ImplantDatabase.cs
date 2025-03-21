@@ -34,9 +34,11 @@ public class ImplantDatabase : MonoBehaviour
             "Скелет",
             glassSkeletonIcon,
             2, 0, 2, 0, // Требования аспектов
-            0.25f, -0.5f, 0f, 0f, // Процентные бонусы (урон, здоровье, скорость, атака)
+            0.25f, -0.5f, 0f, 0f,
             (playerStats) => { },
-            (playerStats) => { }
+            (playerStats) => { },
+            (playerStats) => { playerStats.ApplyPercentageBonus(0f, 0.5f, 0f, 0f); }, // Улучшенный эффект
+            (playerStats) => { playerStats.RemovePercentageBonus(0f, 0.5f, 0f, 0f); }
         ));
 
         implants.Add(new Implant(
@@ -45,10 +47,12 @@ public class ImplantDatabase : MonoBehaviour
             "Увеличивает скорость передвижения на 20%.",
             "Ноги",
             jetLegsIcon,
-            1, 2, 0, 0,
+            1, 2, 0, 0, // Требования аспектов
             0f, 0f, 0.2f, 0f,
             (playerStats) => { },
             (playerStats) => { },
+            (playerStats) => { playerStats.ApplyPercentageBonus(0f, 0f, 0.15f, 0f); }, // Улучшенные эффекты
+            (playerStats) => { playerStats.RemovePercentageBonus(0f, 0f, 0.15f, 0f); },
             (abilities) => abilities.EnableDoubleJump(),
             (abilities) => abilities.DisableDoubleJump()
         ));
@@ -62,7 +66,9 @@ public class ImplantDatabase : MonoBehaviour
             3, 2, 0, 0,
             0f, 0.2f, 0f, 0f,
             (playerStats) => { },
-            (playerStats) => { }
+            (playerStats) => { },
+            (playerStats) => { playerStats.ApplyPercentageBonus(0f, 0f, 0.2f, 0f); }, // Улучшенная версия
+            (playerStats) => { playerStats.RemovePercentageBonus(0f, 0f, 0.2f, 0f); }
         ));
 
         implants.Add(new Implant(
@@ -74,7 +80,9 @@ public class ImplantDatabase : MonoBehaviour
             0, 0, 0, 5,
             0.2f, 0f, 0f, 0f,
             (playerStats) => { },
-            (playerStats) => { }
+            (playerStats) => { },
+            (playerStats) => { playerStats.ApplyPercentageBonus(0.1f, 0f, 0f, 0f); }, // Улучшенный эффект (+10% урона)
+            (playerStats) => { playerStats.RemovePercentageBonus(0.1f, 0f, 0f, 0f); }
         ));
     }
 
