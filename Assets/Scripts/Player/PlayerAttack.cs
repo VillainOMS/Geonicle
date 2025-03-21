@@ -6,6 +6,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (GameState.IsUIOpen || GameState.IsPaused)
+            return;
         if (Input.GetMouseButtonDown(0)) // ЛКМ для атаки
         {
             weaponManager.GetCurrentWeapon()?.Attack();

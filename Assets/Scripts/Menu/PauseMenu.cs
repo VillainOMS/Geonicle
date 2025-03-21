@@ -6,36 +6,41 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject pausePanel; // Основной Panel для паузы
-    [SerializeField] private GameObject pauseMenu; // Панель с кнопками паузы
-    [SerializeField] private GameObject settingsMenu; // Панель с настройками
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject settingsMenu;
     [SerializeField] private Slider sfxVolume;
     [SerializeField] private Slider musicVolume;
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private GameObject altarUI;
     [SerializeField] private GameObject weaponUI;
+    [SerializeField] private GameObject reaperUI;
+
+    private bool isPaused = false;
+    private bool blockPause = false;
 
     private void Start()
     {
+        pausePanel.SetActive(false);
+        pauseMenu.SetActive(false);
+        settingsMenu.SetActive(false);
+
         sfxVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("SFXVolume", -80 + Value * 80); });
         musicVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("MusicVolume", -80 + Value * 80); });
     }
 
-
-    private bool blockPause = false;
-
     private void Update()
     {
-        if (blockPause) return; 
+        if (blockPause) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (altarUI.activeSelf || weaponUI.activeSelf)
+            if (altarUI.activeSelf || weaponUI.activeSelf || reaperUI.activeSelf)
             {
-                return; // Если открыто меню алтаря или оружия — не вызываем паузу
+                return;
             }
 
-            if (pausePanel.activeSelf)
+            if (isPaused)
             {
                 Resume();
             }
@@ -58,41 +63,76 @@ public class PauseMenu : MonoBehaviour
         blockPause = false;
     }
 
-    public void Resume()
+    public void Pause()
     {
-        pausePanel.SetActive(false); // Отключаем основной Panel
-        pauseMenu.SetActive(false);  // Отключаем меню паузы
-        settingsMenu.SetActive(false); // Отключаем меню настроек
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked; // Скрываем курсор
-        Cursor.visible = false;
+        Debug.Log($"PauseMenu (PAUSE): panel={pausePanel}, menu={pauseMenu}, settings={settingsMenu}");
+
+        if (pausePanel == null || pauseMenu == null || settingsMenu == null)
+        {
+            Debug.LogError("PauseMenu: One or more UI elements are not assigned!");
+            return;
+        }
+
+        isPaused = true;
+        Time.timeScale = 0f;
+
+        pausePanel.SetActive(true);
+        pauseMenu.SetActive(true);
+        settingsMenu.SetActive(false);
+
+        // Принудительная задержка перед включением курсора
+        StartCoroutine(EnableCursorWithDelay());
+
+        Debug.Log($"PauseMenu (AFTER PAUSE): panel={pausePanel.activeSelf}, menu={pauseMenu.activeSelf}, settings={settingsMenu.activeSelf}, timeScale={Time.timeScale}");
     }
 
-    private void Pause()
+    private IEnumerator EnableCursorWithDelay()
     {
-        pausePanel.SetActive(true); // Активируем основной Panel
-        pauseMenu.SetActive(true);  // Активируем меню паузы
-        settingsMenu.SetActive(false); // Отключаем меню настроек
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None; // Показываем курсор
+        yield return null; // Ждём кадр, чтобы убедиться, что пауза точно активирована
+        Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        Debug.Log($"PauseMenu: Курсор активирован! lockState={Cursor.lockState}, visible={Cursor.visible}");
+    }
+
+    public void Resume()
+    {
+        Debug.Log($"PauseMenu (RESUME): panel={pausePanel}, menu={pauseMenu}, settings={settingsMenu}");
+
+        if (pausePanel == null || pauseMenu == null || settingsMenu == null)
+        {
+            Debug.LogError("PauseMenu: One or more UI elements are not assigned!");
+            return;
+        }
+
+        isPaused = false;
+        Time.timeScale = 1f;
+
+        pausePanel.SetActive(false);
+        pauseMenu.SetActive(false);
+        settingsMenu.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        Debug.Log($"PauseMenu (AFTER RESUME): panel={pausePanel.activeSelf}, menu={pauseMenu.activeSelf}, settings={settingsMenu.activeSelf}, timeScale={Time.timeScale}, lockState={Cursor.lockState}");
     }
 
     public void OpenSettings()
     {
-        pauseMenu.SetActive(false); // Скрываем меню паузы
-        settingsMenu.SetActive(true); // Показываем меню настроек
+        pauseMenu.SetActive(false);
+        settingsMenu.SetActive(true);
     }
 
     public void CloseSettings()
     {
-        settingsMenu.SetActive(false); // Скрываем меню настроек
-        pauseMenu.SetActive(true); // Показываем меню паузы
+        settingsMenu.SetActive(false);
+        pauseMenu.SetActive(true);
     }
 
     public void LoadMainMenu()
     {
-        Time.timeScale = 1f; // Возвращаем нормальный ход времени перед загрузкой
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
 }

@@ -37,6 +37,18 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void LoadMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
+    }
+
     private void Start()
     {
         currentHealth = baseMaxHealth;
@@ -64,13 +76,18 @@ public class PlayerStats : MonoBehaviour
     private void Die()
     {
         Debug.Log("Игрок погиб!");
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
-        AudioManager.Instance.PlayDeathScreenMusic();
+        else
+        {
+            Debug.LogError("PlayerStats: Не удалось показать GameOver — объект не найден!");
+        }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Time.timeScale = 0f;
     }
 

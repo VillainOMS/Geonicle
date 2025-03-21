@@ -11,6 +11,7 @@ public class Altar : MonoBehaviour
 
     public void OpenAltarMenu()
     {
+        GameState.IsUIOpen = true;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         altarUI.SetActive(true);
@@ -19,6 +20,7 @@ public class Altar : MonoBehaviour
 
     public void CloseMenu()
     {
+        GameState.IsUIOpen = false;
         altarUI.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;

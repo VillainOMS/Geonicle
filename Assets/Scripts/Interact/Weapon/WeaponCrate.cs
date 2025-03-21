@@ -23,6 +23,7 @@ public class WeaponCrate : MonoBehaviour
 
     public void OpenWeaponMenu()
     {
+        GameState.IsUIOpen = true;
         if (!isMenuOpen)
         {
             isMenuOpen = true;
@@ -47,6 +48,7 @@ public class WeaponCrate : MonoBehaviour
 
     private void CloseMenu()
     {
+        GameState.IsUIOpen = false;
         isMenuOpen = false;
         weaponUI.SetActive(false);
         Time.timeScale = 1f;
