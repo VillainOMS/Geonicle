@@ -477,7 +477,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -2011,7 +2011,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &66813352
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5368,7 +5368,7 @@ RectTransform:
   m_Father: {fileID: 650656060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.15, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5503,7 +5503,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &219266193
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6088,8 +6088,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1271453896}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.15, y: 0}
-  m_AnchorMax: {x: 0.15, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7372,7 +7372,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &361321861
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7609,7 +7609,7 @@ RectTransform:
   m_Father: {fileID: 830390413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.15, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -14435,13 +14435,14 @@ GameObject:
   - component: {fileID: 815405143}
   - component: {fileID: 815405145}
   - component: {fileID: 815405144}
+  - component: {fileID: 815405146}
   m_Layer: 5
   m_Name: GameOver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &815405143
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14501,6 +14502,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815405142}
   m_CullTransparentMesh: 1
+--- !u!114 &815405146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815405142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8dfab26a7b58c648998d964d2f9195a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameOverPanel: {fileID: 815405142}
 --- !u!1 &820852668
 GameObject:
   m_ObjectHideFlags: 0
@@ -20337,6 +20351,7 @@ GameObject:
   - component: {fileID: 1030531764}
   - component: {fileID: 1030531765}
   - component: {fileID: 1030531766}
+  - component: {fileID: 1030531767}
   m_Layer: 0
   m_Name: First Person Player
   m_TagString: Player
@@ -20483,6 +20498,20 @@ MonoBehaviour:
   metalImpact: 0.25
   waterImpact: 0.2
   shockImpact: 0.25
+--- !u!114 &1030531767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030531759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 301a911a2b76cec41bfa6bf87d380435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canDoubleJump: 0
+  hasDoubleJumped: 0
 --- !u!1 &1045009278
 GameObject:
   m_ObjectHideFlags: 0
@@ -22449,8 +22478,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 591502904}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.15, y: 0}
-  m_AnchorMax: {x: 0.15, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -22622,6 +22651,7 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: 1d50fcfc1abfcdf44826b0f9e211cf5d, type: 2}
   altarUI: {fileID: 1390892435}
   weaponUI: {fileID: 1165817737}
+  reaperUI: {fileID: 219266192}
 --- !u!43 &1158851732
 Mesh:
   m_ObjectHideFlags: 0

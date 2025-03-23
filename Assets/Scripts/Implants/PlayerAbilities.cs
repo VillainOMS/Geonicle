@@ -5,9 +5,6 @@ public class PlayerAbilities : MonoBehaviour
     public bool canDoubleJump = false;
     public bool hasDoubleJumped = false;
 
-    private bool hasDashDamage = false;
-    private float dashDamageAmount = 10f;
-
     public void EnableDoubleJump()
     {
         canDoubleJump = true;
@@ -18,19 +15,6 @@ public class PlayerAbilities : MonoBehaviour
     {
         canDoubleJump = false;
         Debug.Log("Двойной прыжок отключён.");
-    }
-
-    public void EnableDashDamage(float damage)
-    {
-        hasDashDamage = true;
-        dashDamageAmount = damage;
-        Debug.Log($"Урон от рывка активирован! Урон: {damage}");
-    }
-
-    public void DisableDashDamage()
-    {
-        hasDashDamage = false;
-        Debug.Log("Урон от рывка отключён.");
     }
 
     public void ResetDoubleJump()

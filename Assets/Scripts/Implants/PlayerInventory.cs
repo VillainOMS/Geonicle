@@ -30,10 +30,10 @@ public class PlayerInventory : MonoBehaviour
 
     public void AddNewImplant(Implant implant)
     {
-        if (HasImplantAnywhere(implant)) 
+        if (HasImplantAnywhere(implant))
         {
             Debug.Log($"[AddNewImplant] Попытка повторной выдачи импланта: {implant.Name}. Дубликат не добавлен.");
-            return; 
+            return;
         }
 
         implants.Add(implant);
@@ -41,9 +41,6 @@ public class PlayerInventory : MonoBehaviour
         inventoryManager?.UpdateInventoryUI();
     }
 
-
-
-    // Возврат импланта обратно в инвентарь (без проверки на дубликаты)
     public void ReturnImplantToInventory(Implant implant)
     {
         if (!implants.Contains(implant))
@@ -66,29 +63,14 @@ public class PlayerInventory : MonoBehaviour
 
     public bool HasImplantAnywhere(Implant implant)
     {
-        if (implants.Exists(i => i.ID == implant.ID))
-            return true;
-
-        if (equippedImplants.Exists(i => i.ID == implant.ID))
-            return true;
-
-        return false;
+        return implants.Exists(i => i.ID == implant.ID) ||
+               equippedImplants.Exists(i => i.ID == implant.ID);
     }
-
-
 
     public bool IsImplantEquipped(Implant implant)
     {
-        foreach (var slot in FindObjectsOfType<ImplantSlot>())
-        {
-            if (slot.GetCurrentImplant() == implant)
-            {
-                return true;
-            }
-        }
-        return false;
+        return equippedImplants.Exists(i => i.ID == implant.ID);
     }
-
 
     public List<Implant> GetImplants()
     {
@@ -101,11 +83,15 @@ public class PlayerInventory : MonoBehaviour
         {
             equippedImplants.Add(implant);
 
-            // Проверяем, соответствует ли имплант требованиям аспектов
             bool isEnhanced = implant.CheckIfEnhanced();
             implant.SetEnhanced(isEnhanced);
 
             Debug.Log($"[EquipImplant] Экипирован имплант: {implant.Name}. Усиленная версия: {isEnhanced}");
+
+            if (isEnhanced)
+            {
+                implant.ApplyEnhancedEffect(playerStats);
+            }
 
             PlayerStats.Instance.RecalculateActualStats();
         }
@@ -118,10 +104,14 @@ public class PlayerInventory : MonoBehaviour
         {
             Debug.Log($"[UnequipImplant] Снят имплант: {implant.Name}. Пересчитываем характеристики.");
 
-            implant.RemoveEffect(playerStats, playerAbilities);
-            equippedImplants.Remove(implant);
+            // Если имплант был улучшен, явно отключаем его улучшенный эффект
+            if (implant.IsEnhanced)
+            {
+                implant.RemoveEnhancedEffect(playerStats);
+                implant.SetEnhanced(false);
+            }
 
-            implant.SetEnhanced(false);
+            equippedImplants.Remove(implant);
             PlayerStats.Instance.RecalculateActualStats();
         }
     }
@@ -135,10 +125,8 @@ public class PlayerInventory : MonoBehaviour
     public PlayerAbilities GetPlayerAbilities()
     {
         if (playerAbilities == null)
-        {
             playerAbilities = FindObjectOfType<PlayerAbilities>();
-        }
+
         return playerAbilities;
     }
-
 }

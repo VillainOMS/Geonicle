@@ -50,6 +50,8 @@ public class AltarUI : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Time.timeScale = 1f;
+
+        GameState.IsUIOpen = false;
     }
 
     public void UpgradeAspect(string aspect)
