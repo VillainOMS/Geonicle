@@ -5,7 +5,6 @@ public class RangedEnemy : Enemy
 {
     [SerializeField] private Transform shootPoint;
     [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private int damage = 10;
     [SerializeField] private float detectionRange = 15f;
     [SerializeField] private float fireRate = 2f;
 
@@ -51,9 +50,11 @@ public class RangedEnemy : Enemy
     {
         AudioManager.Instance.PlayEnemyShootSound();
         GameObject projectile = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
+
         Projectile projectileComponent = projectile.GetComponent<Projectile>();
         if (projectileComponent != null)
         {
+            int damage = GetDamage();
             projectileComponent.Initialize(damage, player.position, playerStats);
         }
     }

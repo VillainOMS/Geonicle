@@ -4,7 +4,6 @@ using UnityEngine.AI;
 public class MeleeEnemy : Enemy
 {
     [SerializeField] private float attackRange = 2f;
-    [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackCooldown = 1f;
     private float lastAttackTime;
 
@@ -43,10 +42,13 @@ public class MeleeEnemy : Enemy
     private void Attack()
     {
         lastAttackTime = Time.time;
-        Debug.Log("Melee Enemy Attacked Player for " + attackDamage + " damage!");
+
+        int damage = GetDamage();
+        Debug.Log("Melee Enemy Attacked Player for " + damage + " damage!");
+
         if (playerStats != null)
         {
-            playerStats.TakeDamage(attackDamage);
+            playerStats.TakeDamage(damage);
         }
     }
 }

@@ -2,20 +2,35 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    [SerializeField] private Enemy enemyPrefab; // ѕрефаб врага, которого будем спавнить
+    [SerializeField] private Enemy enemyPrefab;
+    [SerializeField] private bool isElitePoint = false;
+
     private Enemy enemy;
+    public Enemy Enemy => enemy;
 
-    public Enemy Enemy { get => enemy; }
-
-    public void SpawnEnemy()
+    public void SpawnEnemy(bool isEliteWave)
     {
-        enemy = Instantiate(enemyPrefab,transform.position,Quaternion.identity);
-        enemy.onDie += OnEnemyDie;
+        // ќбычный спавнпоинт работает всегда.
+        // Ёлитный Ч только при элитной волне.
+        if (!isElitePoint || (isElitePoint && isEliteWave))
+        {
+            enemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+
+            if (isElitePoint && isEliteWave)
+            {
+                enemy.MakeElite();
+            }
+
+            enemy.onDie += OnEnemyDie;
+        }
     }
 
     private void OnEnemyDie()
     {
-        enemy.onDie -= OnEnemyDie;
-        enemy = null;
+        if (enemy != null)
+        {
+            enemy.onDie -= OnEnemyDie;
+            enemy = null;
+        }
     }
 }

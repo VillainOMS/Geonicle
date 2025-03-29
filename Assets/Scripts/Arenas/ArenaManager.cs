@@ -28,20 +28,21 @@ public class ArenaManager : MonoBehaviour
 
     private void ActivateArena()
     {
+        bool isEliteWave = enterDoor.IsEliteWave(); // получаем от телепорта
+
         foreach (var spawnPoint in spawnPoints)
         {
-            spawnPoint.SpawnEnemy();
+            spawnPoint.SpawnEnemy(isEliteWave);
         }
 
         if (exitCollider != null)
-        {
             exitCollider.enabled = false;
-        }
 
         hasGivenAspectPoint = false;
         hasGivenImplant = false;
         arenaActivated = true;
     }
+
 
     private void Update()
     {
