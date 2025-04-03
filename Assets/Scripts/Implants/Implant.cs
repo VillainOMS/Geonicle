@@ -1,11 +1,13 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class Implant
 {
     public int ID { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
+    public string EnhancedDescription { get; private set; }
     public string Slot { get; private set; }
     public bool IsEnhanced { get; private set; }
     public Sprite Icon { get; private set; }
@@ -28,7 +30,7 @@ public class Implant
     private Action<PlayerAbilities> applyAbilitiesEffect;
     private Action<PlayerAbilities> removeAbilitiesEffect;
 
-    public Implant(int id, string name, string description, string slot, Sprite icon,
+    public Implant(int id, string name, string description, string enhancedDescription, string slot, Sprite icon,
                    int requiredFire, int requiredWater, int requiredMetal, int requiredShock,
                    float damageBonus, float healthBonus, float speedBonus, float attackSpeedBonus,
                    float enhancedDamageBonus, float enhancedHealthBonus, float enhancedSpeedBonus, float enhancedAttackSpeedBonus,
@@ -38,6 +40,7 @@ public class Implant
         ID = id;
         Name = name;
         Description = description;
+        EnhancedDescription = enhancedDescription;
         Slot = slot;
         Icon = icon;
 
@@ -94,4 +97,14 @@ public class Implant
     public float GetEnhancedHealthBonus() => enhancedHealthBonus;
     public float GetEnhancedSpeedBonus() => enhancedSpeedBonus;
     public float GetEnhancedAttackSpeedBonus() => enhancedAttackSpeedBonus;
+
+    public List<string> GetAspectSequence()
+    {
+        var result = new List<string>();
+        for (int i = 0; i < requiredFire; i++) result.Add("Fire");
+        for (int i = 0; i < requiredWater; i++) result.Add("Water");
+        for (int i = 0; i < requiredMetal; i++) result.Add("Metal");
+        for (int i = 0; i < requiredShock; i++) result.Add("Shock");
+        return result;
+    }
 }

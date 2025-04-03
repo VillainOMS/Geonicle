@@ -4,9 +4,22 @@ using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
+    [Header("Инвентарь")]
     [SerializeField] public Transform inventoryPanel;
     [SerializeField] private GameObject implantPrefab;
+
+    [Header("Панель информации")]
+    [SerializeField] private Text implantNameText;
     [SerializeField] private Text implantDescriptionText;
+    [SerializeField] private Transform requiredAspectsPanel;
+    [SerializeField] private Text enhancedEffectText;
+    [SerializeField] private GameObject aspectIconPrefab;
+
+    [Header("Иконки аспектов")]
+    [SerializeField] private Sprite fireSprite;
+    [SerializeField] private Sprite waterSprite;
+    [SerializeField] private Sprite metalSprite;
+    [SerializeField] private Sprite shockSprite;
 
     private void Start()
     {
@@ -35,13 +48,69 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void ShowImplantDescription(string description)
+    public void ShowImplantInfo(Implant implant)
     {
-        implantDescriptionText.text = description;
+        implantNameText.text = implant.Name;
+        implantDescriptionText.text = implant.Description;
+        enhancedEffectText.text = implant.EnhancedDescription;
+
+        // Удаляем старые иконки
+        foreach (Transform child in requiredAspectsPanel)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Получаем последовательность аспектов
+        List<string> requiredAspects = implant.GetAspectSequence();
+
+        // Получаем уровень аспектов игрока
+        Dictionary<string, int> playerAspects = new()
+        {
+            { "Fire", PlayerAspects.Instance.GetFireLevel() },
+            { "Water", PlayerAspects.Instance.GetWaterLevel() },
+            { "Metal", PlayerAspects.Instance.GetMetalLevel() },
+            { "Shock", PlayerAspects.Instance.GetShockLevel() }
+        };
+
+        // Сопоставление иконок
+        Dictionary<string, Sprite> aspectSprites = new()
+        {
+            { "Fire", fireSprite },
+            { "Water", waterSprite },
+            { "Metal", metalSprite },
+            { "Shock", shockSprite }
+        };
+
+        // Счётчик уже использованных аспектов
+        Dictionary<string, int> used = new()
+        {
+            { "Fire", 0 },
+            { "Water", 0 },
+            { "Metal", 0 },
+            { "Shock", 0 }
+        };
+
+        foreach (string aspect in requiredAspects)
+        {
+            GameObject iconGO = Instantiate(aspectIconPrefab, requiredAspectsPanel);
+            Image iconImage = iconGO.GetComponent<Image>();
+            iconImage.sprite = aspectSprites[aspect];
+
+            used[aspect]++;
+            bool hasEnough = used[aspect] <= playerAspects[aspect];
+            iconImage.color = hasEnough ? Color.white : new Color(1f, 1f, 1f, 0.3f);
+        }
     }
 
-    public void HideImplantDescription()
+    public void HideImplantInfo()
     {
+        implantNameText.text = "";
         implantDescriptionText.text = "";
+        enhancedEffectText.text = "";
+
+        foreach (Transform child in requiredAspectsPanel)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }

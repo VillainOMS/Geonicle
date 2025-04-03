@@ -28,14 +28,18 @@ public class ImplantDatabase : MonoBehaviour
     private void InitializeImplants()
     {
         implants.Add(new Implant(
-            1, "Стеклянный скелет", "Урон +25%, Здоровье -50%", "Скелет", glassSkeletonIcon,
+            1, "Стеклянный скелет", "Урон +25%, Здоровье -50%",
+            "Урон остаётся, но здоровье режется только на 25% (2 Металла, 2 Воды)",
+            "Скелет", glassSkeletonIcon,
             2, 0, 2, 0,
             0.25f, -0.5f, 0f, 0f,
-            0f, 0.25f, 0f, 0f
+            0.25f, -0.25f, 0f, 0f
         ));
 
         implants.Add(new Implant(
-            2, "Реактивные ноги", "Скорость +20%", "Ноги", jetLegsIcon,
+            2, "Реактивные ноги", "Скорость +20%",
+            "Даёт двойной прыжок (1 Огонь, 2 Воды)",
+            "Ноги", jetLegsIcon,
             1, 2, 0, 0,
             0f, 0f, 0.2f, 0f,
             0f, 0f, 0.1f, 0f,
@@ -44,17 +48,21 @@ public class ImplantDatabase : MonoBehaviour
         ));
 
         implants.Add(new Implant(
-            3, "Паровое сердце", "Здоровье +20%", "Сердце", steamHeartIcon,
+            3, "Паровое сердце", "Здоровье +20%",
+            "Дополнительно +15% к скорости атаки и передвижения (3 Огня, 2 Воды)",
+            "Сердце", steamHeartIcon,
             3, 2, 0, 0,
             0f, 0.2f, 0f, 0f,
-            0f, 0f, 0.2f, 0f
+            0f, 0.2f, 0.15f, 0.15f
         ));
 
         implants.Add(new Implant(
-            4, "Глаза с наведением", "Урон +20%", "Глаза", trackingEyesIcon,
+            4, "Глаза с наведением", "Урон +20%",
+            "При убийстве врага наносит 20 урона случайному врагу (5 Шока)",
+            "Глаза", trackingEyesIcon,
             0, 0, 0, 5,
             0.2f, 0f, 0f, 0f,
-            0.1f, 0f, 0f, 0f
+            0.3f, 0f, 0f, 0f
         ));
     }
 

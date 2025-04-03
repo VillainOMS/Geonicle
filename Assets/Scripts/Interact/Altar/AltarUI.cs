@@ -5,17 +5,18 @@ public class AltarUI : MonoBehaviour
 {
     [SerializeField] private GameObject altarUI;
     [SerializeField] private Button fireButton, metalButton, waterButton, shockButton;
+
     [SerializeField] private Image[] fireLevels, metalLevels, waterLevels, shockLevels;
 
-    // ÷вета аспектов
-    private Color fireActive = new Color(1f, 0f, 0f, 1f);
-    private Color fireInactive = new Color(1f, 0.5f, 0.5f, 0.5f);
-    private Color metalActive = new Color(0.75f, 0.75f, 0.75f, 1f);
-    private Color metalInactive = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-    private Color waterActive = new Color(0f, 0f, 1f, 1f);
-    private Color waterInactive = new Color(0.5f, 0.5f, 1f, 0.5f);
-    private Color shockActive = new Color(1f, 0f, 1f, 1f);
-    private Color shockInactive = new Color(1f, 0.5f, 1f, 0.5f);
+    // —прайты аспектов
+    [SerializeField] private Sprite fireIcon;
+    [SerializeField] private Sprite metalIcon;
+    [SerializeField] private Sprite waterIcon;
+    [SerializeField] private Sprite shockIcon;
+
+    // ÷вета затемнени€
+    private Color activeColor = Color.white;
+    private Color inactiveColor = new Color(1f, 1f, 1f, 0.3f); // просто прозрачный белый
 
     private void Update()
     {
@@ -32,7 +33,7 @@ public class AltarUI : MonoBehaviour
 
     private void Start()
     {
-        SetInitialColors();
+        SetInitialIcons();
     }
 
     public void OpenAltarMenu()
@@ -63,12 +64,12 @@ public class AltarUI : MonoBehaviour
         }
     }
 
-    private void SetInitialColors()
+    private void SetInitialIcons()
     {
-        UpdateLevels(fireLevels, PlayerAspects.Instance.GetFireLevel(), fireInactive, fireActive);
-        UpdateLevels(metalLevels, PlayerAspects.Instance.GetMetalLevel(), metalInactive, metalActive);
-        UpdateLevels(waterLevels, PlayerAspects.Instance.GetWaterLevel(), waterInactive, waterActive);
-        UpdateLevels(shockLevels, PlayerAspects.Instance.GetShockLevel(), shockInactive, shockActive);
+        UpdateLevels(fireLevels, PlayerAspects.Instance.GetFireLevel(), fireIcon);
+        UpdateLevels(metalLevels, PlayerAspects.Instance.GetMetalLevel(), metalIcon);
+        UpdateLevels(waterLevels, PlayerAspects.Instance.GetWaterLevel(), waterIcon);
+        UpdateLevels(shockLevels, PlayerAspects.Instance.GetShockLevel(), shockIcon);
     }
 
     private void UpdateUI()
@@ -85,17 +86,19 @@ public class AltarUI : MonoBehaviour
                   $"Water({PlayerAspects.Instance.GetWaterLevel()}), " +
                   $"Shock({PlayerAspects.Instance.GetShockLevel()})");
 
-        UpdateLevels(fireLevels, PlayerAspects.Instance.GetFireLevel(), fireInactive, fireActive);
-        UpdateLevels(metalLevels, PlayerAspects.Instance.GetMetalLevel(), metalInactive, metalActive);
-        UpdateLevels(waterLevels, PlayerAspects.Instance.GetWaterLevel(), waterInactive, waterActive);
-        UpdateLevels(shockLevels, PlayerAspects.Instance.GetShockLevel(), shockInactive, shockActive);
+        UpdateLevels(fireLevels, PlayerAspects.Instance.GetFireLevel(), fireIcon);
+        UpdateLevels(metalLevels, PlayerAspects.Instance.GetMetalLevel(), metalIcon);
+        UpdateLevels(waterLevels, PlayerAspects.Instance.GetWaterLevel(), waterIcon);
+        UpdateLevels(shockLevels, PlayerAspects.Instance.GetShockLevel(), shockIcon);
     }
 
-    private void UpdateLevels(Image[] levelImages, int level, Color inactiveColor, Color activeColor)
+    private void UpdateLevels(Image[] levelImages, int level, Sprite icon)
     {
         for (int i = 0; i < levelImages.Length; i++)
         {
+            levelImages[i].sprite = icon;
             levelImages[i].color = (i < level) ? activeColor : inactiveColor;
+            levelImages[i].preserveAspect = true;
         }
     }
 }

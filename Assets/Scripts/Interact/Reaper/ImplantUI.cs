@@ -98,11 +98,12 @@ public class ImplantUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        inventoryManager.ShowImplantDescription(ImplantData.Description);
+        inventoryManager.ShowImplantInfo(ImplantData);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        inventoryManager.HideImplantDescription();
+        inventoryManager.HideImplantInfo();
     }
+
 }
