@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected int maxHealth = 50;
     protected int currentHealth;
 
-    [SerializeField] private GameObject damageTextPrefab; // Префаб текста урона
+    [SerializeField] private GameObject damageTextPrefab;
 
     [Header("Боевая сила")]
     [SerializeField] protected int baseDamage = 10;
@@ -19,7 +19,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private bool isElite = false;
     [SerializeField] private float eliteHealthMultiplier = 1.5f;
     [SerializeField] private float eliteDamageMultiplier = 1.3f;
-    [SerializeField] private GameObject eliteMarker; // Визуальный треугольник
+    [SerializeField] private GameObject eliteMarker;
+
+    public bool IsDead => currentHealth <= 0;
 
     protected virtual void Awake()
     {
@@ -56,7 +58,7 @@ public class Enemy : MonoBehaviour
         return currentDamage;
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         ShowDamageText(damage);
         currentHealth -= damage;

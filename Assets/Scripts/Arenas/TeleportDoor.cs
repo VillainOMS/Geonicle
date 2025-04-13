@@ -14,14 +14,14 @@ public class TeleportDoor : MonoBehaviour
     public event Action<Transform> OnPlayerTeleport;
 
     [SerializeField] private bool isArenaEntrance = true;
-    [SerializeField] private ArenaTier[] arenaTiers;         // Тиры арен
-    [SerializeField] private int wavesPerTier = 3;           // Боев на один тир
-    [SerializeField] private Transform bossTeleportPoint;    // Точка телепорта к боссу
+    [SerializeField] private bool skipToBossForTesting = false; // Новое поле
+    [SerializeField] private ArenaTier[] arenaTiers;
+    [SerializeField] private int wavesPerTier = 3;
+    [SerializeField] private Transform bossTeleportPoint;
 
     private List<int> usedIndexesInTier = new List<int>();
     private int currentTier = 0;
     private int waveInTier = 0;
-
     private bool isBossFight = false;
 
     private void OnTriggerEnter(Collider other)
@@ -36,7 +36,7 @@ public class TeleportDoor : MonoBehaviour
     {
         if (!isArenaEntrance)
         {
-            // Просто телепорт назад в хаб
+            // Телепорт назад
             if (arenaTiers.Length == 0 || arenaTiers[0].teleportPoints.Length == 0)
             {
                 Debug.LogWarning("Не указана точка возврата в комнату отдыха!");
@@ -58,7 +58,15 @@ public class TeleportDoor : MonoBehaviour
             return;
         }
 
-        // Если все тиры пройдены — телепортируем на арену босса
+        // Новый: пропустить прямо к боссу, если включено
+        if (skipToBossForTesting)
+        {
+            Debug.LogWarning("Тестовый режим: телепортируем сразу к БОССУ!");
+            TeleportToBoss(player);
+            return;
+        }
+
+        // Обычная логика: выбор арены по текущему прогрессу
         if (currentTier >= arenaTiers.Length)
         {
             TeleportToBoss(player);
@@ -67,7 +75,6 @@ public class TeleportDoor : MonoBehaviour
 
         ArenaTier tier = arenaTiers[currentTier];
 
-        // Выбираем случайную арену, которая ещё не использовалась в этом тиру
         List<int> availableIndexes = new List<int>();
         for (int i = 0; i < tier.teleportPoints.Length; i++)
         {
@@ -83,10 +90,8 @@ public class TeleportDoor : MonoBehaviour
 
         int chosenIndex = availableIndexes[UnityEngine.Random.Range(0, availableIndexes.Count)];
         usedIndexesInTier.Add(chosenIndex);
-
         Transform chosenPoint = tier.teleportPoints[chosenIndex];
 
-        // Телепортируем игрока
         CharacterController characterController = player.GetComponent<CharacterController>();
         if (characterController != null)
         {
@@ -100,7 +105,6 @@ public class TeleportDoor : MonoBehaviour
 
         Debug.Log($"Игрок телепортирован на арену: {chosenPoint.name} (Тир: {currentTier + 1}, Волна: {waveInTier}/{wavesPerTier})");
 
-        // Переход к следующему тиру, если все волны в этом тиру завершены
         if (waveInTier >= wavesPerTier)
         {
             waveInTier = 0;
@@ -126,13 +130,11 @@ public class TeleportDoor : MonoBehaviour
         Debug.Log("Игрок телепортирован на арену с БОССОМ!");
     }
 
-    // Метод для запроса: элитная ли волна?
     public bool IsEliteWave()
     {
         return waveInTier == wavesPerTier - 1 && currentTier < arenaTiers.Length;
     }
 
-    // Метод для запроса: это бой с боссом?
     public bool IsBossFight()
     {
         return isBossFight;

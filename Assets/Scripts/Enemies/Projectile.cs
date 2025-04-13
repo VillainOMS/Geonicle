@@ -6,7 +6,15 @@ public class Projectile : MonoBehaviour
     private PlayerStats playerStats; // Система здоровья игрока
     private Vector3 direction; // Направление полета
     [SerializeField] private float speed = 20f; // Скорость снаряда
-    [SerializeField] private float lifetime = 8f; // Время жизни снаряда
+    [SerializeField] private float lifetime = 15f; // Время жизни снаряда
+
+
+    public void Initialize(int damageAmount, Vector3 direction)
+    {
+        damage = damageAmount;
+        this.direction = direction.normalized;
+        Destroy(gameObject, lifetime);
+    }
 
     // Метод для установки урона и цели снаряда
     public void Initialize(int damageAmount, Vector3 targetPosition, PlayerStats targetStats)
@@ -26,17 +34,23 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Проверка на столкновение с игроком
-        if (other.CompareTag("Player") && playerStats != null)
+        if (other.CompareTag("Player"))
         {
-            playerStats.TakeDamage(damage);
+            PlayerStats stats = other.GetComponent<PlayerStats>();
+            if (stats != null)
+            {
+                stats.TakeDamage(damage);
+            }
+
             Destroy(gameObject);
+            return;
         }
 
-        // Проверяем, не является ли объект союзным (например, враг)
-        if (!other.CompareTag("Enemy") && !other.CompareTag("Projectile"))
+        // Уничтожаемся, если попали во что-то, что НЕ "Enemy" и НЕ "Projectile"
+        if (!other.CompareTag("Enemy") && !other.CompareTag("Projectile") && !other.isTrigger)
         {
             Destroy(gameObject);
         }
     }
+
 }
