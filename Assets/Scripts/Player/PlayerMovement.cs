@@ -56,6 +56,10 @@ public class PlayerMovement : MonoBehaviour
 
         float currentSpeed = baseSpeed * playerStats.actualMoveSpeed;
         float currentJumpHeight = baseJumpHeight * (1 + (playerStats.actualMoveSpeed - 1) * 0.9f);
+        if (playerAbilities.IsJumpBoostEnabled())
+        {
+            currentJumpHeight *= 1.15f; // +15% к высоте прыжка
+        }
         float currentGravity = baseGravity * (1 + (playerStats.actualMoveSpeed - 1) * 1.1f);
 
         float currentDashDistance = baseDashDistance * (1 + (playerStats.actualMoveSpeed - 1) * dashDistanceImpact);
@@ -100,6 +104,16 @@ public class PlayerMovement : MonoBehaviour
 
         velocity.y = 0;
 
+        if (playerAbilities.IsDashDamageEnabled())
+        {
+            DealDashDamage(); // наносим урон врагам рядом
+        }
+
+        if (PlayerInventory.Instance.GetEquippedImplants().Exists(i => i.IsEnhanced && i.Name == "Защитные тормоза"))
+        {
+            playerAbilities.EnableDashInvulnerability(0.5f);
+        }
+
         Vector3 dashDirection = moveDirection.normalized;
         float dashEndTime = Time.time + dashTime;
 
@@ -113,4 +127,22 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
+
+    private void DealDashDamage()
+    {
+        float radius = 5f;
+        int damage = 10;
+
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius);
+        foreach (var hit in hitColliders)
+        {
+            Enemy enemy = hit.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+        }
+    }
 }
+
+

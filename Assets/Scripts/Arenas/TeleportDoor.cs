@@ -103,6 +103,8 @@ public class TeleportDoor : MonoBehaviour
 
         waveInTier++;
 
+        TryTriggerStartOfCombatEffects();
+
         Debug.Log($"Игрок телепортирован на арену: {chosenPoint.name} (Тир: {currentTier + 1}, Волна: {waveInTier}/{wavesPerTier})");
 
         if (waveInTier >= wavesPerTier)
@@ -113,6 +115,20 @@ public class TeleportDoor : MonoBehaviour
             Debug.Log("Переход к следующему тиру арен.");
         }
     }
+
+    private void TryTriggerStartOfCombatEffects()
+    {
+        var implants = PlayerInventory.Instance.GetEquippedImplants();
+        foreach (var implant in implants)
+        {
+            if (implant.IsEnhanced && implant.Name == "Мозговая защита")
+            {
+                PlayerInventory.Instance.GetPlayerAbilities().TriggerIgnoreNextDamage();
+                Debug.Log("Мозговая защита активирована: следующий урон будет проигнорирован.");
+            }
+        }
+    }
+
 
     private void TeleportToBoss(Transform player)
     {

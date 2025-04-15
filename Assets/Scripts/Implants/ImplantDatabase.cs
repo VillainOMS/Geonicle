@@ -70,11 +70,13 @@ public class ImplantDatabase : MonoBehaviour
 
         implants.Add(new Implant(
             4, "Глаза с наведением", "Урон +10%",
-            "При убийстве врага наносит 20 урона случайному другому",
+            "При убийстве врага наносит 15 урона случайному другому",
             "Глаза", trackingEyesIcon,
             0, 0, 0, 5,
             0.1f, 0f, 0f, 0f,
-            0.1f, 0f, 0f, 0f
+            0.1f, 0f, 0f, 0f,
+            (abilities) => abilities.EnableTrackingShotOnKill(),
+            (abilities) => abilities.DisableTrackingShotOnKill()
         ));
 
         implants.Add(new Implant(
@@ -83,7 +85,9 @@ public class ImplantDatabase : MonoBehaviour
             "Скелет", steelBonesIcon,
             0, 1, 3, 0,
             0f, 0.25f, 0f, 0f,
-            0f, 0.25f, 0f, 0f
+            0f, 0.25f, 0f, 0f,
+            (abilities) => abilities.EnableHealOnKill(),
+            (abilities) => abilities.DisableHealOnKill()
         ));
 
         implants.Add(new Implant(
@@ -110,7 +114,9 @@ public class ImplantDatabase : MonoBehaviour
             "Ноги", hydroDriveIcon,
             0, 2, 0, 0,
             0f, 0f, 0.15f, 0f,
-            0f, 0f, 0.15f, 0f
+            0f, 0f, 0.15f, 0f,
+            (abilities) => abilities.EnableJumpBoost(),
+            (abilities) => abilities.DisableJumpBoost()
         ));
 
         implants.Add(new Implant(
@@ -119,7 +125,9 @@ public class ImplantDatabase : MonoBehaviour
             "Ноги", dashArmorIcon,
             0, 0, 3, 1,
             0f, 0.15f, 0f, 0f,
-            0f, 0.15f, 0f, 0f
+            0f, 0.15f, 0f, 0f,
+            (abilities) => { }, // ничего активировать заранее не нужно
+            (abilities) => { }  // ничего выключать заранее не нужно
         ));
 
         implants.Add(new Implant(
@@ -155,8 +163,10 @@ public class ImplantDatabase : MonoBehaviour
             "Особое", brainShieldIcon,
             0, 0, 2, 3,
             0f, 0.1f, 0f, 0f,
-            0f, 0.1f, 0f, 0f
+            0f, 0.1f, 0f, 0f,
+            null, null // не требует перманентной активации
         ));
+
 
         implants.Add(new Implant(
             14, "Электроступы", "Скорость +10%",
@@ -164,7 +174,9 @@ public class ImplantDatabase : MonoBehaviour
             "Ноги", electroStepIcon,
             1, 0, 0, 2,
             0f, 0f, 0.1f, 0f,
-            0f, 0f, 0.1f, 0f
+            0f, 0f, 0.1f, 0f,
+            (abilities) => abilities.EnableDashDamage(),
+            (abilities) => abilities.DisableDashDamage()
         ));
     }
 

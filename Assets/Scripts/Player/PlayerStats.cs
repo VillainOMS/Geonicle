@@ -57,6 +57,17 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (PlayerInventory.Instance.GetPlayerAbilities().IsInvulnerable)
+        {
+            Debug.Log("Урон заблокирован: игрок неуязвим.");
+            return;
+        }
+
+        if (PlayerInventory.Instance.GetPlayerAbilities().TryBlockDamage())
+        {
+            return;
+        }
+
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, actualMaxHealth);
         UpdateHealthBar();
@@ -64,6 +75,15 @@ public class PlayerStats : MonoBehaviour
 
         if (currentHealth <= 0)
             Die();
+    }
+
+
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, actualMaxHealth);
+        UpdateHealthBar();
+        Debug.Log($"Игрок исцелен на {amount}. Текущее HP: {currentHealth}");
     }
 
     private void Die()

@@ -71,6 +71,9 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        PlayerAbilities abilities = FindObjectOfType<PlayerAbilities>();
+        abilities?.OnEnemyKilled();
+
         onDie?.Invoke();
         Destroy(gameObject);
     }
