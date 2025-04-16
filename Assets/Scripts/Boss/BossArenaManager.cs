@@ -20,6 +20,9 @@ public class BossArenaManager : MonoBehaviour
     [SerializeField] private TeleportDoor enterDoor;
     [SerializeField] private Transform teleportPoint;
 
+    [Header("UI")]
+    [SerializeField] private BossHealthUI bossHealthUI;
+
     private bool arenaActivated = false;
     private bool phase1Triggered = false;
     private bool phase2Triggered = false;
@@ -48,6 +51,16 @@ public class BossArenaManager : MonoBehaviour
     private void ActivateBossArena()
     {
         arenaActivated = true;
+
+        if (bossHealthUI != null)
+        {
+            bossHealthUI.Show();
+            Debug.Log("BossArenaManager: Прогрессбар босса активирован.");
+        }
+        else
+        {
+            Debug.LogWarning("BossArenaManager: bossHealthUI не назначен в инспекторе!");
+        }
 
         GameObject bossGO = Instantiate(bossPrefab, bossSpawnPoint.position, Quaternion.identity);
         boss = bossGO.GetComponent<BossController>();

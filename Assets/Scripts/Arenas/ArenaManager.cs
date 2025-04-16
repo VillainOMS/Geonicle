@@ -8,6 +8,9 @@ public class ArenaManager : MonoBehaviour
     [SerializeField] private TeleportDoor enterDoor;
     [SerializeField] private Transform teleportPoint;
 
+    [Header("¬изуал портала")]
+    [SerializeField] private PortalVisual portalVisual;
+
     private BoxCollider exitCollider;
     private bool hasGivenAspectPoint = false;
     private bool hasGivenImplant = false;
@@ -24,11 +27,17 @@ public class ArenaManager : MonoBehaviour
         hasGivenAspectPoint = false;
         hasGivenImplant = false;
         arenaActivated = false;
+
+        if (portalVisual != null)
+        {
+            portalVisual.SetPortalOpen(true); // при старте в комнате отдыха Ч открыт
+        }
+
     }
 
     private void ActivateArena()
     {
-        bool isEliteWave = enterDoor.IsEliteWave(); // получаем от телепорта
+        bool isEliteWave = enterDoor.IsEliteWave();
 
         foreach (var spawnPoint in spawnPoints)
         {
@@ -41,8 +50,13 @@ public class ArenaManager : MonoBehaviour
         hasGivenAspectPoint = false;
         hasGivenImplant = false;
         arenaActivated = true;
-    }
 
+        if (portalVisual != null)
+        {
+            portalVisual.SetPortalOpen(false); // арена активирована Ч враги скоро будут
+        }
+
+    }
 
     private void Update()
     {
@@ -59,9 +73,10 @@ public class ArenaManager : MonoBehaviour
             }
         }
 
-        if (!areEnemiesRemaining && exitCollider != null)
+        if (!areEnemiesRemaining)
         {
-            exitCollider.enabled = true;
+            if (exitCollider != null)
+                exitCollider.enabled = true;
 
             if (!hasGivenAspectPoint)
             {
@@ -74,10 +89,21 @@ public class ArenaManager : MonoBehaviour
                 GiveRandomImplantToPlayer();
                 hasGivenImplant = true;
             }
+
+            if (portalVisual != null)
+            {
+                portalVisual.SetPortalOpen(true); // враги убиты Ч открываем
+            }
         }
         else
         {
-            exitCollider.enabled = false;
+            if (exitCollider != null)
+                exitCollider.enabled = false;
+
+            if (portalVisual != null)
+            {
+                portalVisual.SetPortalOpen(false); // враги живы Ч закрыто
+            }
         }
     }
 
@@ -99,7 +125,6 @@ public class ArenaManager : MonoBehaviour
 
         foreach (Implant implant in allImplants)
         {
-            // правильна€ проверка
             if (!PlayerInventory.Instance.HasImplantAnywhere(implant))
             {
                 availableImplants.Add(implant);
@@ -118,9 +143,6 @@ public class ArenaManager : MonoBehaviour
 
         Debug.Log($"»грок получил имплант: {randomImplant.Name}");
     }
-
-
-
 
     private void OnEnable()
     {

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 
@@ -63,6 +64,18 @@ public class Enemy : MonoBehaviour
         ShowDamageText(damage);
         currentHealth -= damage;
 
+        // Анимация тряски (если не босс)
+        if (!TryGetComponent<BossController>(out _))
+        {
+            transform.DOKill(); // Прерываем предыдущие твины
+            transform.DOShakeRotation(
+                duration: 0.3f,
+                strength: new Vector3(0f, 0f, 15f),
+                vibrato: 15,
+                randomness: 90
+            ).SetEase(Ease.OutQuad);
+        }
+
         if (currentHealth <= 0)
         {
             Die();
@@ -75,7 +88,12 @@ public class Enemy : MonoBehaviour
         abilities?.OnEnemyKilled();
 
         onDie?.Invoke();
-        Destroy(gameObject);
+
+        // Анимация падения
+        transform.DOKill();
+        transform.DORotate(new Vector3(-90f, transform.eulerAngles.y, 0f), 0.3f)
+                 .SetEase(Ease.InBack)
+                 .OnComplete(() => Destroy(gameObject));
     }
 
     private void ShowDamageText(int damage)
