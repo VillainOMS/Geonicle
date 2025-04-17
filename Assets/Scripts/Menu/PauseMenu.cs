@@ -15,6 +15,8 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject altarUI;
     [SerializeField] private GameObject weaponUI;
     [SerializeField] private GameObject reaperUI;
+    [SerializeField] private Slider mouseSensitivitySlider;
+    [SerializeField] private MouseLook mouseLook;
 
     private bool isPaused = false;
     private bool blockPause = false;
@@ -25,8 +27,28 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(false);
         settingsMenu.SetActive(false);
 
-        sfxVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("SFXVolume", -80 + Value * 80); });
-        musicVolume.onValueChanged.AddListener((Value) => { audioMixer.SetFloat("MusicVolume", -80 + Value * 80); });
+        // Установка громкости через децибелы
+        sfxVolume.onValueChanged.AddListener((value) => {
+            audioMixer.SetFloat("SFXVolume", VolumeToDecibels(value));
+        });
+
+        musicVolume.onValueChanged.AddListener((value) => {
+            audioMixer.SetFloat("MusicVolume", VolumeToDecibels(value));
+        });
+
+        mouseSensitivitySlider.onValueChanged.AddListener((value) => {
+            if (mouseLook != null)
+            {
+                float mappedValue = Mathf.Lerp(50f, 300f, value); // Значение от 50 до 200
+                mouseLook.SetSensitivity(mappedValue);
+            }
+        });
+
+    }
+
+    private float VolumeToDecibels(float volume)
+    {
+        return volume <= 0.0001f ? -80f : Mathf.Log10(volume) * 20f;
     }
 
     private void Update()
@@ -36,18 +58,12 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (altarUI.activeSelf || weaponUI.activeSelf || reaperUI.activeSelf)
-            {
                 return;
-            }
 
             if (isPaused)
-            {
                 Resume();
-            }
             else
-            {
                 Pause();
-            }
         }
     }
 
@@ -65,8 +81,6 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        Debug.Log($"PauseMenu (PAUSE): panel={pausePanel}, menu={pauseMenu}, settings={settingsMenu}");
-
         if (pausePanel == null || pauseMenu == null || settingsMenu == null)
         {
             Debug.LogError("PauseMenu: One or more UI elements are not assigned!");
@@ -80,25 +94,18 @@ public class PauseMenu : MonoBehaviour
         pauseMenu.SetActive(true);
         settingsMenu.SetActive(false);
 
-        // Принудительная задержка перед включением курсора
         StartCoroutine(EnableCursorWithDelay());
-
-        Debug.Log($"PauseMenu (AFTER PAUSE): panel={pausePanel.activeSelf}, menu={pauseMenu.activeSelf}, settings={settingsMenu.activeSelf}, timeScale={Time.timeScale}");
     }
 
     private IEnumerator EnableCursorWithDelay()
     {
-        yield return null; // Ждём кадр, чтобы убедиться, что пауза точно активирована
+        yield return null;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-
-        Debug.Log($"PauseMenu: Курсор активирован! lockState={Cursor.lockState}, visible={Cursor.visible}");
     }
 
     public void Resume()
     {
-        Debug.Log($"PauseMenu (RESUME): panel={pausePanel}, menu={pauseMenu}, settings={settingsMenu}");
-
         if (pausePanel == null || pauseMenu == null || settingsMenu == null)
         {
             Debug.LogError("PauseMenu: One or more UI elements are not assigned!");
@@ -114,8 +121,6 @@ public class PauseMenu : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        Debug.Log($"PauseMenu (AFTER RESUME): panel={pausePanel.activeSelf}, menu={pauseMenu.activeSelf}, settings={settingsMenu.activeSelf}, timeScale={Time.timeScale}, lockState={Cursor.lockState}");
     }
 
     public void OpenSettings()

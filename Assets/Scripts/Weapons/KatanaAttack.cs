@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class KatanaAttack : WeaponBase
@@ -43,18 +44,28 @@ public class KatanaAttack : WeaponBase
 
         Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
 
-        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
+        Collider[] hitColliders = Physics.OverlapSphere(
+            attackCenter,
+            attackRange,
+            ~0,
+            QueryTriggerInteraction.Collide
+        );
+
+        HashSet<Enemy> damagedEnemies = new HashSet<Enemy>();
+
         foreach (var hitCollider in hitColliders)
         {
-            Vector3 directionToTarget = (hitCollider.transform.position - attackOrigin.position).normalized;
-            float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
+            // используем bounds.center вместо transform.position
+            Vector3 directionToTarget = (hitCollider.bounds.center - attackOrigin.position).normalized;
+            float angleToTarget = Vector3.Angle(attackOrigin.forward, directionToTarget);
 
-            if (angleToTarget <= attackAngle / 2 && hitCollider.CompareTag("Enemy"))
+            if (angleToTarget <= attackAngle / 2)
             {
-                Enemy enemy = hitCollider.GetComponent<Enemy>();
-                if (enemy != null)
+                Enemy enemy = hitCollider.GetComponentInParent<Enemy>();
+                if (enemy != null && !damagedEnemies.Contains(enemy))
                 {
                     enemy.TakeDamage((int)GetFinalDamage());
+                    damagedEnemies.Add(enemy);
                 }
             }
         }
@@ -64,11 +75,11 @@ public class KatanaAttack : WeaponBase
     {
         if (attackOrigin == null) return;
 
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); // Красный цвет
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
         Vector3 forward = attackOrigin.forward * attackRange;
         Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
 
-        Gizmos.DrawWireSphere(attackCenter, attackRange); // Основная зона атаки
+        Gizmos.DrawWireSphere(attackCenter, attackRange);
 
         for (float angle = -attackAngle / 2; angle <= attackAngle / 2; angle += 5f)
         {
@@ -76,5 +87,4 @@ public class KatanaAttack : WeaponBase
             Gizmos.DrawRay(attackCenter, direction);
         }
     }
-
 }
