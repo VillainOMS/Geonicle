@@ -59,7 +59,7 @@ public class PlayerAbilities : MonoBehaviour
 
         if (healOnKill)
         {
-            PlayerStats.Instance.Heal(2);
+            PlayerStats.Instance.Heal(4);
         }
     }
 

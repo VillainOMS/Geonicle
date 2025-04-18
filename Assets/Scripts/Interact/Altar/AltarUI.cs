@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,10 @@ public class AltarUI : MonoBehaviour
     [SerializeField] private Sprite waterIcon;
     [SerializeField] private Sprite shockIcon;
 
+    public static AltarUI Instance { get; private set; }
+    [SerializeField] private Text tooltipText;
+
+
     // ÷вета затемнени€
     private Color activeColor = Color.white;
     private Color inactiveColor = new Color(1f, 1f, 1f, 0.3f); // просто прозрачный белый
@@ -28,12 +33,24 @@ public class AltarUI : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
         altarUI.SetActive(false);
     }
 
     private void Start()
     {
         SetInitialIcons();
+    }
+
+    public void SetTooltip(string text)
+    {
+        tooltipText.text = text;
+    }
+
+    public void ClearTooltip()
+    {
+        tooltipText.text = "";
     }
 
     public void OpenAltarMenu()

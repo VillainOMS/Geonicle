@@ -22,6 +22,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private int currentHealth;
     [SerializeField] private float currentHealthPercentage;
 
+    [SerializeField] private Text healthText;
     [SerializeField] private Slider healthBar;
     [SerializeField] private GameObject gameOverPanel;
 
@@ -77,6 +78,10 @@ public class PlayerStats : MonoBehaviour
             Die();
     }
 
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
 
     public void Heal(int amount)
     {
@@ -100,7 +105,19 @@ public class PlayerStats : MonoBehaviour
     {
         if (healthBar != null)
             healthBar.value = (float)currentHealth / actualMaxHealth;
+
+        if (healthText != null)
+            healthText.text = $"{currentHealth}/{actualMaxHealth}";
+
+        RectTransform rt = healthBar.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            float baseWidth = 500f;
+            float newWidth = baseWidth * ((float)actualMaxHealth / 100f);
+            rt.sizeDelta = new Vector2(newWidth, rt.sizeDelta.y);
+        }
     }
+
 
     public void ApplyAspectBonuses(int fireLevel, int metalLevel, int waterLevel, int shockLevel)
     {

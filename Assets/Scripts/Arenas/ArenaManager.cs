@@ -82,6 +82,17 @@ public class ArenaManager : MonoBehaviour
             {
                 PlayerAspects.Instance?.AddAspectPoint();
                 hasGivenAspectPoint = true;
+
+                // Ћечение 15% от недостающего здоровь€
+                if (PlayerStats.Instance != null)
+                {
+                    int missingHP = PlayerStats.Instance.actualMaxHealth - PlayerStats.Instance.GetCurrentHealth();
+                    int healAmount = Mathf.RoundToInt(missingHP * 0.15f);
+                    if (healAmount > 0)
+                    {
+                        PlayerStats.Instance.Heal(healAmount);
+                    }
+                }
             }
 
             if (!hasGivenImplant)
@@ -92,7 +103,7 @@ public class ArenaManager : MonoBehaviour
 
             if (portalVisual != null)
             {
-                portalVisual.SetPortalOpen(true); // враги убиты Ч открываем
+                portalVisual.SetPortalOpen(true); // враги убиты Ч портал открыт
             }
         }
         else

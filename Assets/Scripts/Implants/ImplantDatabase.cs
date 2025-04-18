@@ -81,7 +81,7 @@ public class ImplantDatabase : MonoBehaviour
 
         implants.Add(new Implant(
             5, "Стальные кости", "Здоровье +25%",
-            "Восстанавливает 2 HP за убийство",
+            "Восстанавливает 4 HP за убийство",
             "Скелет", steelBonesIcon,
             0, 1, 3, 0,
             0f, 0.25f, 0f, 0f,
