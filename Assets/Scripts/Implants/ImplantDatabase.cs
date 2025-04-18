@@ -70,7 +70,7 @@ public class ImplantDatabase : MonoBehaviour
 
         implants.Add(new Implant(
             4, "Глаза с наведением", "Урон +10%",
-            "При убийстве врага наносит 15 урона случайному другому",
+            "При убийстве врага наносит 10 урона другому случайному врагу",
             "Глаза", trackingEyesIcon,
             0, 0, 0, 5,
             0.1f, 0f, 0f, 0f,

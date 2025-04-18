@@ -8,7 +8,8 @@ public class PlayerAttack : MonoBehaviour
     {
         if (GameState.IsUIOpen || GameState.IsPaused)
             return;
-        if (Input.GetMouseButtonDown(0)) // ЛКМ для атаки
+
+        if (Input.GetMouseButton(0))
         {
             weaponManager.GetCurrentWeapon()?.Attack();
         }

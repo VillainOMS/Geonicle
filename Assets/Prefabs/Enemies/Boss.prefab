@@ -686,7 +686,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3517021afdf5bf4382a75fd655d6f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 800
   damageTextPrefab: {fileID: 758295121553661668, guid: d9008ddfa97b6bf45ab7307a06131016, type: 3}
   baseDamage: 10
   isElite: 0
@@ -713,7 +713,7 @@ MonoBehaviour:
   projectileCount: 5
   spreadAngle: 30
   energyStrikePrefab: {fileID: 519416627986931549, guid: b146588799af7c244b2bc85817bfc775, type: 3}
-  energyAttackInterval: 8
+  energyAttackInterval: 6
   strikeCount: 3
   strikeRadius: 6
   player: {fileID: 0}

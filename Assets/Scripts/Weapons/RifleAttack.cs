@@ -35,7 +35,9 @@ public class RifleAttack : WeaponBase
             .SetLoops(2, LoopType.Yoyo)
             .SetEase(Ease.OutSine);
 
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, range))
+        int ignoreBossAttackMask = ~(1 << LayerMask.NameToLayer("BossAttack"));
+
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, range, ignoreBossAttackMask))
         {
             if (hit.collider.CompareTag("Enemy"))
             {
@@ -46,5 +48,6 @@ public class RifleAttack : WeaponBase
                 }
             }
         }
+
     }
 }

@@ -78,7 +78,7 @@ public class PlayerAbilities : MonoBehaviour
         if (alive.Count > 0)
         {
             int index = UnityEngine.Random.Range(0, alive.Count);
-            alive[index].TakeDamage(15);
+            alive[index].TakeDamage(10);
             Debug.Log("Глаза с наведением: нанесён урон другому врагу");
         }
     }

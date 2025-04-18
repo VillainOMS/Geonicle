@@ -44,10 +44,12 @@ public class KatanaAttack : WeaponBase
 
         Vector3 attackCenter = attackOrigin.position + attackOrigin.forward * (attackRange * 0.2f);
 
+        int ignoreBossAttackMask = ~(1 << LayerMask.NameToLayer("BossAttack"));
+
         Collider[] hitColliders = Physics.OverlapSphere(
             attackCenter,
             attackRange,
-            ~0,
+            ignoreBossAttackMask,
             QueryTriggerInteraction.Collide
         );
 
