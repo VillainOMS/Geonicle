@@ -45,7 +45,7 @@ public class ImplantDatabase : MonoBehaviour
             "Скелет", glassSkeletonIcon,
             2, 0, 2, 0,
             0.25f, -0.5f, 0f, 0f,
-            0.25f, -0.25f, 0f, 0f
+            0f, 0.25f, 0f, 0f
         ));
 
         implants.Add(new Implant(
