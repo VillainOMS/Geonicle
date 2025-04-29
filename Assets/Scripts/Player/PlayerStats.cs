@@ -112,7 +112,7 @@ public class PlayerStats : MonoBehaviour
         RectTransform rt = healthBar.GetComponent<RectTransform>();
         if (rt != null)
         {
-            float baseWidth = 500f;
+            float baseWidth = 350f;
             float newWidth = baseWidth * ((float)actualMaxHealth / 100f);
             rt.sizeDelta = new Vector2(newWidth, rt.sizeDelta.y);
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -108,4 +109,27 @@ public class PlayerAspects : MonoBehaviour
     public float GetMetalImpact() => metalImpact;
     public float GetWaterImpact() => waterImpact;
     public float GetShockImpact() => shockImpact;
+
+    public bool HasEnoughAspects(Implant implant)
+    {
+        Dictionary<string, int> requiredAspects = new()
+    {
+        { "Fire", 0 },
+        { "Water", 0 },
+        { "Metal", 0 },
+        { "Shock", 0 }
+    };
+
+        foreach (var aspect in implant.GetAspectSequence())
+        {
+            if (requiredAspects.ContainsKey(aspect))
+                requiredAspects[aspect]++;
+        }
+
+        return GetFireLevel() >= requiredAspects["Fire"] &&
+               GetWaterLevel() >= requiredAspects["Water"] &&
+               GetMetalLevel() >= requiredAspects["Metal"] &&
+               GetShockLevel() >= requiredAspects["Shock"];
+    }
+
 }

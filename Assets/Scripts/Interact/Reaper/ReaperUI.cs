@@ -33,6 +33,7 @@ public class ReaperUI : MonoBehaviour
         if (GameState.IsUIOpen) return; // Проверяем, не открыто ли другое меню
 
         GameState.IsUIOpen = true;
+        InteractPromptUI.Instance.HidePrompt();
         isOpen = true;
 
         reaperPanel.SetActive(true);

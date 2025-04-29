@@ -11,6 +11,7 @@ public class Interactable : MonoBehaviour
         if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
         {
             onInteract?.Invoke(); // Вызываем событие
+            InteractPromptUI.Instance.HidePrompt(); // Прячем подсказку после взаимодействия
         }
     }
 
@@ -19,6 +20,7 @@ public class Interactable : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNear = true;
+            InteractPromptUI.Instance.ShowPrompt(); // Показываем подсказку
         }
     }
 
@@ -27,6 +29,7 @@ public class Interactable : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNear = false;
+            InteractPromptUI.Instance.HidePrompt(); // Скрываем подсказку
         }
     }
 }

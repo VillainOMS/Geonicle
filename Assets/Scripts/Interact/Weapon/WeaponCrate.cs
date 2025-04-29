@@ -24,6 +24,7 @@ public class WeaponCrate : MonoBehaviour
     public void OpenWeaponMenu()
     {
         GameState.IsUIOpen = true;
+        InteractPromptUI.Instance.HidePrompt();
         if (!isMenuOpen)
         {
             isMenuOpen = true;

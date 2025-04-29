@@ -54,7 +54,7 @@ public class ImplantDatabase : MonoBehaviour
             "Ноги", jetLegsIcon,
             1, 2, 0, 0,
             0f, 0f, 0.1f, 0f,
-            0f, 0f, 0.1f, 0f,
+            0f, 0f, 0f, 0f,
             (abilities) => abilities.EnableDoubleJump(),
             (abilities) => abilities.DisableDoubleJump()
         ));
@@ -65,7 +65,7 @@ public class ImplantDatabase : MonoBehaviour
             "Сердце", steamHeartIcon,
             3, 2, 0, 0,
             0f, 0.2f, 0f, 0f,
-            0f, 0.2f, 0.15f, 0.15f
+            0f, 0f, 0.15f, 0.15f
         ));
 
         implants.Add(new Implant(
@@ -74,7 +74,7 @@ public class ImplantDatabase : MonoBehaviour
             "Глаза", trackingEyesIcon,
             0, 0, 0, 5,
             0.1f, 0f, 0f, 0f,
-            0.1f, 0f, 0f, 0f,
+            0f, 0f, 0f, 0f,
             (abilities) => abilities.EnableTrackingShotOnKill(),
             (abilities) => abilities.DisableTrackingShotOnKill()
         ));
@@ -85,7 +85,7 @@ public class ImplantDatabase : MonoBehaviour
             "Скелет", steelBonesIcon,
             0, 1, 3, 0,
             0f, 0.25f, 0f, 0f,
-            0f, 0.25f, 0f, 0f,
+            0f, 0f, 0f, 0f,
             (abilities) => abilities.EnableHealOnKill(),
             (abilities) => abilities.DisableHealOnKill()
         ));
@@ -96,7 +96,7 @@ public class ImplantDatabase : MonoBehaviour
             "Сердце", flameCoreIcon,
             3, 0, 0, 0,
             0.1f, 0f, 0f, 0f,
-            0.1f, 0f, 0f, 0.15f
+            0f, 0f, 0f, 0.15f
         ));
 
         implants.Add(new Implant(
@@ -125,7 +125,7 @@ public class ImplantDatabase : MonoBehaviour
             "Ноги", dashArmorIcon,
             0, 0, 3, 1,
             0f, 0.15f, 0f, 0f,
-            0f, 0.15f, 0f, 0f,
+            0f, 0f, 0f, 0f,
             (abilities) => { }, // ничего активировать заранее не нужно
             (abilities) => { }  // ничего выключать заранее не нужно
         ));
@@ -136,7 +136,7 @@ public class ImplantDatabase : MonoBehaviour
             "Глаза", tacticInterfaceIcon,
             2, 0, 0, 1,
             0f, 0f, 0f, 0.1f,
-            0.1f, 0f, 0f, 0.1f
+            0.1f, 0f, 0f, 0f
         ));
 
         implants.Add(new Implant(
@@ -145,7 +145,7 @@ public class ImplantDatabase : MonoBehaviour
             "Скелет", combatFrameIcon,
             1, 0, 2, 0,
             0.1f, 0.1f, 0f, 0f,
-            0.1f, 0.1f, 0f, 0.1f
+            0f, 0f, 0f, 0.1f
         ));
 
         implants.Add(new Implant(
@@ -154,7 +154,7 @@ public class ImplantDatabase : MonoBehaviour
             "Особое", diaphragmIcon,
             2, 0, 2, 1,
             0.05f, 0f, 0.05f, 0f,
-            0.05f, 0.1f, 0.05f, 0.1f
+            0f, 0.1f, 0f, 0.1f
         ));
 
         implants.Add(new Implant(
@@ -163,7 +163,7 @@ public class ImplantDatabase : MonoBehaviour
             "Особое", brainShieldIcon,
             0, 0, 2, 3,
             0f, 0.1f, 0f, 0f,
-            0f, 0.1f, 0f, 0f,
+            0f, 0f, 0f, 0f,
             null, null // не требует перманентной активации
         ));
 
@@ -174,7 +174,7 @@ public class ImplantDatabase : MonoBehaviour
             "Ноги", electroStepIcon,
             1, 0, 0, 2,
             0f, 0f, 0.1f, 0f,
-            0f, 0f, 0.1f, 0f,
+            0f, 0f, 0f, 0f,
             (abilities) => abilities.EnableDashDamage(),
             (abilities) => abilities.DisableDashDamage()
         ));

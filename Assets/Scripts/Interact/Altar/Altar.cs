@@ -12,6 +12,7 @@ public class Altar : MonoBehaviour
     public void OpenAltarMenu()
     {
         GameState.IsUIOpen = true;
+        InteractPromptUI.Instance.HidePrompt();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         altarUI.SetActive(true);

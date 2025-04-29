@@ -54,6 +54,9 @@ public class InventoryManager : MonoBehaviour
         implantDescriptionText.text = implant.Description;
         enhancedEffectText.text = implant.EnhancedDescription;
 
+        bool isEnhanced = PlayerAspects.Instance.HasEnoughAspects(implant); // !!! Поясню ниже что это
+        UpdateEnhancedEffectVisual(isEnhanced);
+
         // Удаляем старые иконки
         foreach (Transform child in requiredAspectsPanel)
         {
@@ -111,6 +114,20 @@ public class InventoryManager : MonoBehaviour
         foreach (Transform child in requiredAspectsPanel)
         {
             Destroy(child.gameObject);
+        }
+    }
+
+    private void UpdateEnhancedEffectVisual(bool isEnhanced)
+    {
+        if (isEnhanced)
+        {
+            // Насыщенный чёрный
+            enhancedEffectText.color = new Color(0.1f, 0.1f, 0.1f);
+        }
+        else
+        {
+            // Светлый серо-чёрный
+            enhancedEffectText.color = new Color(0.5f, 0.5f, 0.5f);
         }
     }
 }
