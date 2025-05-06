@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -26,6 +27,12 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private Slider healthBar;
     [SerializeField] private GameObject gameOverPanel;
 
+    [Header("Визуальный оверлей (урон / лечение)")]
+    [SerializeField] private Image damageOverlayImage;
+    [SerializeField] private float overlayDuration = 0.2f;
+    [SerializeField] private float overlayFadeSpeed = 4f;
+    private Coroutine damageOverlayCoroutine;
+
     private void Awake()
     {
         if (Instance == null)
@@ -42,6 +49,12 @@ public class PlayerStats : MonoBehaviour
 
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
+
+        if (damageOverlayImage != null)
+        {
+            damageOverlayImage.color = new Color(1, 0, 0, 0);
+            damageOverlayImage.gameObject.SetActive(false);
+        }
     }
 
     public void RestartGame()
@@ -74,13 +87,10 @@ public class PlayerStats : MonoBehaviour
         UpdateHealthBar();
         AudioManager.Instance.PlayPlayerHurtSound();
 
+        TriggerOverlay(Color.red, 4f);
+
         if (currentHealth <= 0)
             Die();
-    }
-
-    public int GetCurrentHealth()
-    {
-        return currentHealth;
     }
 
     public void Heal(int amount)
@@ -89,7 +99,40 @@ public class PlayerStats : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, actualMaxHealth);
         UpdateHealthBar();
         Debug.Log($"Игрок исцелен на {amount}. Текущее HP: {currentHealth}");
+
+        TriggerOverlay(Color.green, 0.5f);
     }
+
+    private void TriggerOverlay(Color flashColor, float fadeSpeed)
+    {
+        if (damageOverlayImage == null)
+            return;
+
+        if (damageOverlayCoroutine != null)
+            StopCoroutine(damageOverlayCoroutine);
+
+        damageOverlayCoroutine = StartCoroutine(FlashOverlay(flashColor, fadeSpeed));
+    }
+
+
+    private IEnumerator FlashOverlay(Color flashColor, float fadeSpeed)
+    {
+        damageOverlayImage.gameObject.SetActive(true);
+        damageOverlayImage.color = new Color(flashColor.r, flashColor.g, flashColor.b, 0.1f); 
+
+        yield return new WaitForSeconds(overlayDuration);
+
+        while (damageOverlayImage.color.a > 0)
+        {
+            Color c = damageOverlayImage.color;
+            c.a -= Time.deltaTime * fadeSpeed;
+            damageOverlayImage.color = c;
+            yield return null;
+        }
+
+        damageOverlayImage.gameObject.SetActive(false);
+    }
+
 
     private void Die()
     {
@@ -99,6 +142,20 @@ public class PlayerStats : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Time.timeScale = 0f;
+
+        if (damageOverlayCoroutine != null)
+            StopCoroutine(damageOverlayCoroutine);
+
+        if (damageOverlayImage != null)
+        {
+            damageOverlayImage.color = new Color(1, 0, 0, 0);
+            damageOverlayImage.gameObject.SetActive(false);
+        }
+    }
+
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
     }
 
     public void UpdateHealthBar()
@@ -117,7 +174,6 @@ public class PlayerStats : MonoBehaviour
             rt.sizeDelta = new Vector2(newWidth, rt.sizeDelta.y);
         }
     }
-
 
     public void ApplyAspectBonuses(int fireLevel, int metalLevel, int waterLevel, int shockLevel)
     {
